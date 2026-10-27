@@ -1,4 +1,4 @@
-/* English Practice App — pure vanilla JS for GitHub Pages */
+/* English Practice App - pure vanilla JS for GitHub Pages */
 
 (function () {
   "use strict";
@@ -123,7 +123,7 @@
       const count = WORDS.filter((w) => w.cat === key).length;
       const chip = document.createElement("button");
       chip.className = "cat-chip";
-      chip.innerHTML = `${label}<small>${count} слов</small>`;
+      chip.innerHTML = label + "<small>" + count + " слов</small>";
       chip.addEventListener("click", () => {
         document.getElementById("category-filter").value = key;
         showView("words");
@@ -152,6 +152,12 @@
     });
   }
 
+  function escapeHtml(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
   function renderWordsList() {
     const cat = document.getElementById("category-filter").value;
     const q = (document.getElementById("word-search").value || "").trim().toLowerCase();
@@ -171,25 +177,27 @@
     }
     container.innerHTML = list
       .map(
-        (w) => `
-      <div class="word-item ${isLearned(w.id) ? "learned" : ""}" data-id="${w.id}">
-        <div>
-          <div class="word-en">${escapeHtml(w.en)}</div>
-          <div class="word-ru">${escapeHtml(w.ru)}</div>
-          ${w.example ? `<div class="word-example">${escapeHtml(w.example)}</div>` : ""}
-        </div>
-        <span class="word-cat">${CATEGORIES[w.cat] || w.cat}</span>
-      </div>`
+        (w) =>
+          '<div class="word-item ' +
+          (isLearned(w.id) ? "learned" : "") +
+          '" data-id="' +
+          w.id +
+          '">' +
+          "<div>" +
+          '<div class="word-en">' +
+          escapeHtml(w.en) +
+          "</div>" +
+          '<div class="word-ru">' +
+          escapeHtml(w.ru) +
+          "</div>" +
+          (w.example ? '<div class="word-example">' + escapeHtml(w.example) + "</div>" : "") +
+          "</div>" +
+          '<span class="word-cat">' +
+          (CATEGORIES[w.cat] || w.cat) +
+          "</span>" +
+          "</div>"
       )
       .join("");
-  }
-
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, "&")
-      .replace(/</g, "<")
-      .replace(/>/g, ">")
-      .replace(/"/g, """);
   }
 
   document.getElementById("category-filter").addEventListener("change", renderWordsList);
@@ -212,7 +220,7 @@
     card.classList.remove("flipped");
     fcFlipped = false;
     if (!fcList.length) {
-      document.getElementById("fc-word").textContent = "—";
+      document.getElementById("fc-word").textContent = "-";
       document.getElementById("fc-translation").textContent = "Нет слов";
       document.getElementById("fc-example").textContent = "";
       document.getElementById("fc-counter").textContent = "0 / 0";
@@ -222,7 +230,7 @@
     document.getElementById("fc-word").textContent = w.en;
     document.getElementById("fc-translation").textContent = w.ru;
     document.getElementById("fc-example").textContent = w.example || "";
-    document.getElementById("fc-counter").textContent = `${fcIndex + 1} / ${fcList.length}`;
+    document.getElementById("fc-counter").textContent = fcIndex + 1 + " / " + fcList.length;
   }
 
   document.getElementById("flashcard").addEventListener("click", () => {
@@ -253,7 +261,7 @@
 
   document.getElementById("fc-again").addEventListener("click", () => {
     if (!fcList.length) return;
-    const [w] = fcList.splice(fcIndex, 1);
+    const w = fcList.splice(fcIndex, 1)[0];
     fcList.push(w);
     if (fcIndex >= fcList.length) fcIndex = 0;
     renderFlashcard();
@@ -351,9 +359,9 @@
     quizAnswered = false;
     const q = quizQuestions[quizIndex];
     const total = quizQuestions.length;
-    document.getElementById("quiz-q-num").textContent = `${quizIndex + 1} / ${total}`;
-    document.getElementById("quiz-score").textContent = `${quizScore} правильных`;
-    document.getElementById("quiz-progress-fill").style.width = `${(quizIndex / total) * 100}%`;
+    document.getElementById("quiz-q-num").textContent = quizIndex + 1 + " / " + total;
+    document.getElementById("quiz-score").textContent = quizScore + " правильных";
+    document.getElementById("quiz-progress-fill").style.width = (quizIndex / total) * 100 + "%";
     document.getElementById("quiz-feedback").textContent = "";
     document.getElementById("quiz-feedback").className = "quiz-feedback";
 
@@ -398,7 +406,7 @@
       if (quizQuestions[quizIndex].wordId) markLearned(quizQuestions[quizIndex].wordId, true);
     } else {
       if (btn) btn.classList.add("wrong");
-      feedback.textContent = `Неверно. Правильно: ${correct}`;
+      feedback.textContent = "Неверно. Правильно: " + correct;
       feedback.className = "quiz-feedback wrong";
     }
     setTimeout(nextQuestion, 900);
@@ -413,7 +421,7 @@
     return String(s)
       .trim()
       .toLowerCase()
-      .replace(/[’']/g, "'");
+      .replace(/[\u2019']/g, "'");
   }
 
   function checkTyped() {
@@ -432,7 +440,7 @@
       feedback.className = "quiz-feedback correct";
       if (q.wordId) markLearned(q.wordId, true);
     } else {
-      feedback.textContent = `Неверно. Правильно: ${q.correct}`;
+      feedback.textContent = "Неверно. Правильно: " + q.correct;
       feedback.className = "quiz-feedback wrong";
     }
     setTimeout(nextQuestion, 1100);
@@ -454,8 +462,8 @@
     quizResult.classList.remove("hidden");
     const total = quizQuestions.length;
     const pct = total ? Math.round((quizScore / total) * 100) : 0;
-    document.getElementById("result-score").textContent = `${quizScore} / ${total}`;
-    document.getElementById("result-percent").textContent = `${pct}%`;
+    document.getElementById("result-score").textContent = quizScore + " / " + total;
+    document.getElementById("result-percent").textContent = pct + "%";
     let msg = "Продолжай в том же духе!";
     if (pct >= 90) msg = "Отлично! Ты почти готов к собеседованию.";
     else if (pct >= 70) msg = "Хороший результат. Ещё немного практики — и будет супер.";
