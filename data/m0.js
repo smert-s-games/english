@@ -1,1 +1,2 @@
-PLACEHOLDER_M0
+var _WD=[[1,"interview","\u0441\u043e\u0431\u0435\u0441\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435","\u0438\u043d-\u0442\u0435\u0440-\u0432\u044c\u044e","I have an interview at the embassy.","\u0423 \u043c\u0435\u043d\u044f \u0441\u043e\u0431\u0435\u0441\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435 \u0432 \u043f\u043e\u0441\u043e\u043b\u044c\u0441\u0442\u0432\u0435.","interview","noun",1]];
+var WORDS=_WD.map(function(r){return{id:r[0],en:r[1],ru:r[2],tr:r[3],example:r[4],exampleRu:r[5],cat:r[6],pos:r[7],chapter:r[8]};});
