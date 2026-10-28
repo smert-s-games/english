@@ -1,8 +1,7 @@
-/* English Practice App v5 */
+/* English Practice App v6 — auth + cloud sync */
 (function () {
   "use strict";
 
-  // Same key as before — progress is preserved
   const STORAGE_KEY = "english-practice-v1";
 
   function loadState() {
@@ -26,6 +25,7 @@
 
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (window.EnglishAuth && EnglishAuth.scheduleCloudSave) EnglishAuth.scheduleCloudSave();
   }
 
   var state = loadState();
@@ -584,146 +584,120 @@
     document.getElementById("quiz-q-num").textContent = quizIndex + 1 + " / " + total;
     document.getElementById("quiz-score").textContent = quizScore + " правильных";
     document.getElementById("quiz-progress-fill").style.width =
-      (quizIndex / total) * 100 + "%";
+      ((quizIndex / total) * 100) + "%";
     document.getElementById("quiz-feedback").textContent = "";
     document.getElementById("quiz-feedback").className = "quiz-feedback";
-    var optionsEl = document.getElementById("quiz-options");
+
+    var optsEl = document.getElementById("quiz-options");
     var inputWrap = document.getElementById("quiz-input-wrap");
-    optionsEl.innerHTML = "";
+    optsEl.innerHTML = "";
     inputWrap.classList.add("hidden");
 
     if (q.type === "choice" || q.type === "sentence") {
-      var prompt =
-        q.type === "sentence" ? q.text.replace("___", "______") : q.prompt;
-      var sub = q.sub ? "\n" + q.sub : "";
-      document.getElementById("quiz-question").textContent = prompt + sub;
-      var opts = q.type === "sentence" ? shuffle(q.options.slice()) : q.options;
-      opts.forEach(function (opt) {
+      document.getElementById("quiz-question").innerHTML =
+        escapeHtml(q.prompt || q.text || "") +
+        (q.sub ? '<div class="muted">' + escapeHtml(q.sub) + "</div>" : "");
+      (q.options || []).forEach(function (opt) {
         var btn = document.createElement("button");
         btn.className = "quiz-option";
         btn.textContent = opt;
         btn.addEventListener("click", function () {
-          answerChoice(opt, q.correct, btn);
+          if (quizAnswered) return;
+          quizAnswered = true;
+          var ok = opt === q.correct;
+          if (ok) quizScore++;
+          btn.classList.add(ok ? "correct" : "wrong");
+          optsEl.querySelectorAll(".quiz-option").forEach(function (b) {
+            b.disabled = true;
+            if (b.textContent === q.correct) b.classList.add("correct");
+          });
+          document.getElementById("quiz-feedback").textContent = ok
+            ? "Верно!"
+            : "Правильный ответ: " + q.correct;
+          document.getElementById("quiz-feedback").className =
+            "quiz-feedback " + (ok ? "correct" : "wrong");
+          if (ok && q.wordId) markLearned(q.wordId, true);
+          quizWaitingContinue = true;
+          quizContinue.classList.remove("hidden");
         });
-        optionsEl.appendChild(btn);
+        optsEl.appendChild(btn);
       });
     } else {
       document.getElementById("quiz-question").textContent = q.prompt;
       inputWrap.classList.remove("hidden");
-      var input = document.getElementById("quiz-input");
-      input.value = "";
-      input.focus();
+      var inp = document.getElementById("quiz-input");
+      inp.value = "";
+      inp.focus();
     }
   }
 
-  function showContinue() {
-    quizWaitingContinue = true;
-    quizContinue.classList.remove("hidden");
-  }
-
-  function answerChoice(selected, correct, btn) {
-    if (quizAnswered) return;
-    quizAnswered = true;
-    document.querySelectorAll(".quiz-option").forEach(function (o) {
-      o.disabled = true;
-      if (o.textContent === correct) o.classList.add("correct");
-    });
-    var feedback = document.getElementById("quiz-feedback");
-    if (selected === correct) {
-      quizScore++;
-      feedback.textContent = "Верно!";
-      feedback.className = "quiz-feedback correct";
-      if (quizQuestions[quizIndex].wordId)
-        markLearned(quizQuestions[quizIndex].wordId, true);
-    } else {
-      if (btn) btn.classList.add("wrong");
-      feedback.textContent = "Неверно. Правильно: " + correct;
-      feedback.className = "quiz-feedback wrong";
-    }
-    showContinue();
-  }
-
-  document.getElementById("quiz-check").addEventListener("click", checkTyped);
-  document.getElementById("quiz-input").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") checkTyped();
-  });
-
-  function normalize(s) {
-    return String(s)
-      .trim()
-      .toLowerCase()
-      .replace(/[\u2019']/g, "'");
-  }
-
-  function checkTyped() {
+  document.getElementById("quiz-check").addEventListener("click", function () {
     if (quizAnswered) return;
     var q = quizQuestions[quizIndex];
-    var val = normalize(document.getElementById("quiz-input").value);
-    if (!val) return;
+    var val = document.getElementById("quiz-input").value.trim();
     quizAnswered = true;
-    var feedback = document.getElementById("quiz-feedback");
-    if (val === normalize(q.correct)) {
-      quizScore++;
-      feedback.textContent = "Верно!";
-      feedback.className = "quiz-feedback correct";
-      if (q.wordId) markLearned(q.wordId, true);
-    } else {
-      feedback.textContent = "Неверно. Правильно: " + q.correct;
-      feedback.className = "quiz-feedback wrong";
-    }
-    showContinue();
-  }
+    var ok =
+      val.toLowerCase() === String(q.correct).trim().toLowerCase();
+    if (ok) quizScore++;
+    document.getElementById("quiz-feedback").textContent = ok
+      ? "Верно!"
+      : "Правильный ответ: " + q.correct;
+    document.getElementById("quiz-feedback").className =
+      "quiz-feedback " + (ok ? "correct" : "wrong");
+    if (ok && q.wordId) markLearned(q.wordId, true);
+    quizWaitingContinue = true;
+    quizContinue.classList.remove("hidden");
+  });
 
-  function nextQuestion() {
+  document.getElementById("quiz-input").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.getElementById("quiz-check").click();
+  });
+
+  function nextQuizQuestion() {
     if (!quizWaitingContinue && quizAnswered) return;
     quizWaitingContinue = false;
     quizIndex++;
-    if (quizIndex >= quizQuestions.length) finishQuiz();
-    else showQuestion();
+    if (quizIndex >= quizQuestions.length) {
+      finishQuiz();
+      return;
+    }
+    showQuestion();
   }
 
-  document.getElementById("quiz-next-btn").addEventListener("click", function (e) {
-    e.stopPropagation();
-    nextQuestion();
-  });
-
-  quizArea.addEventListener("click", function (e) {
+  document.getElementById("quiz-next-btn").addEventListener("click", nextQuizQuestion);
+  document.getElementById("quiz-area").addEventListener("click", function (e) {
     if (!quizWaitingContinue) return;
-    if (e.target.closest && e.target.closest("#quiz-next-btn")) return;
-    nextQuestion();
+    if (e.target.closest("#quiz-next-btn")) return;
+    nextQuizQuestion();
   });
 
   function finishQuiz() {
-    state.quizzesDone = (state.quizzesDone || 0) + 1;
-    saveState();
     hideAllQuiz();
     quizResult.classList.remove("hidden");
     var total = quizQuestions.length;
-    var pct = total ? Math.round((quizScore / total) * 100) : 0;
     document.getElementById("result-score").textContent = quizScore + " / " + total;
+    var pct = total ? Math.round((quizScore / total) * 100) : 0;
     document.getElementById("result-percent").textContent = pct + "%";
-    var msg = "Продолжай в том же духе!";
-    if (pct >= 90) msg = "Отлично! Ты почти готов к собеседованию.";
-    else if (pct >= 70) msg = "Хороший результат. Ещё немного практики.";
-    else if (pct >= 50) msg = "Неплохо. Повтори сложные слова.";
-    else msg = "Не сдавайся. Карточки помогут.";
+    var msg =
+      pct >= 90
+        ? "Отлично! Ты готов к интервью."
+        : pct >= 70
+        ? "Хороший результат, ещё немного практики."
+        : "Продолжай тренироваться — получится!";
     document.getElementById("result-message").textContent = msg;
-    document.getElementById("quiz-progress-fill").style.width = "100%";
+    state.quizzesDone = (state.quizzesDone || 0) + 1;
+    saveState();
   }
 
-  document.getElementById("quiz-again").addEventListener("click", function () {
-    hideAllQuiz();
-    quizSetup.classList.remove("hidden");
-  });
-
+  document.getElementById("quiz-again").addEventListener("click", startQuiz);
   document.getElementById("quiz-to-menu").addEventListener("click", function () {
     hideAllQuiz();
     quizMenu.classList.remove("hidden");
   });
 
   function renderProgress() {
-    var learned = learnedCount();
     var total = WORDS.length;
+    var learned = learnedCount();
     document.getElementById("prog-learned").textContent = learned;
     document.getElementById("prog-streak").textContent = state.streak || 0;
     document.getElementById("prog-quizzes").textContent = state.quizzesDone || 0;
@@ -776,4 +750,28 @@
   updateStats();
   renderHome();
   showView("home");
+
+  if (window.EnglishAuth) {
+    EnglishAuth.init({
+      getState: function () { return state; },
+      setState: function (merged) {
+        state.learned = merged.learned;
+        state.favorites = merged.favorites;
+        state.streak = merged.streak;
+        state.lastVisit = merged.lastVisit;
+        state.quizzesDone = merged.quizzesDone;
+        if (merged.theme) {
+          state.theme = merged.theme;
+          document.documentElement.setAttribute("data-theme", merged.theme);
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        updateStats();
+        try { renderProgress(); } catch (_) {}
+      },
+      onProgressMerged: function () {
+        updateStats();
+        try { renderProgress(); } catch (_) {}
+      },
+    });
+  }
 })();
