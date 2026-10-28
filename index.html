@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Practice</title>
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=11" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -18,6 +18,7 @@
         </div>
       </div>
       <div class="header-actions">
+        <button id="account-btn" class="btn-account" type="button" title="Аккаунт">Войти</button>
         <button id="theme-toggle" class="btn-icon" title="Сменить тему"><span class="theme-icon sun">☀</span><span class="theme-icon moon">☾</span></button>
       </div>
     </header>
@@ -55,19 +56,54 @@
     </main>
     <footer class="footer"><p>Сделано для подготовки к собеседованию · GitHub Pages</p></footer>
   </div>
-  <script src="data/x0.js?v=10"></script>
-  <script src="data/x1.js?v=10"></script>
-  <script src="data/x2.js?v=10"></script>
-  <script src="data/x3.js?v=10"></script>
-  <script src="data/x4.js?v=10"></script>
-  <script src="data/x5.js?v=10"></script>
-  <script src="data/x6.js?v=10"></script>
-  <script src="data/x7.js?v=10"></script>
-  <script src="data/x8.js?v=10"></script>
-  <script src="data/x9.js?v=10"></script>
-  <script src="data/x10.js?v=10"></script>
-  <script src="data/x11.js?v=10"></script>
-  <script src="data/chmeta.js?v=10"></script>
-  <script src="app.js?v=10"></script>
+
+  <!-- Auth modal -->
+  <div id="auth-overlay" class="auth-overlay hidden" aria-hidden="true">
+    <div class="auth-modal" role="dialog" aria-labelledby="auth-title">
+      <button type="button" class="auth-close" id="auth-close" aria-label="Закрыть">×</button>
+      <h2 id="auth-title">Аккаунт</h2>
+      <p class="muted auth-sub">Войди, чтобы синхронизировать прогресс между устройствами.</p>
+      <div class="auth-tabs">
+        <button type="button" id="tab-login" class="on">Вход</button>
+        <button type="button" id="tab-reg">Регистрация</button>
+      </div>
+      <form id="auth-form">
+        <input type="hidden" id="auth-mode" value="login" />
+        <div id="reg-extra" class="hidden">
+          <label for="reg-name">Имя</label>
+          <input id="reg-name" autocomplete="name" placeholder="Как к тебе обращаться" />
+        </div>
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" required autocomplete="email" />
+        <label for="auth-password">Пароль</label>
+        <input id="auth-password" type="password" required minlength="6" autocomplete="current-password" />
+        <p id="auth-msg" class="auth-msg"></p>
+        <button class="btn btn-primary" id="auth-submit" type="submit">Войти</button>
+      </form>
+      <div id="auth-logged" class="hidden">
+        <p class="auth-who">Вы вошли как <strong id="auth-email-display"></strong></p>
+        <p id="auth-sync-msg" class="muted"></p>
+        <button type="button" class="btn btn-ghost" id="auth-logout">Выйти</button>
+        <button type="button" class="btn btn-primary" id="auth-sync-now">Синхронизировать сейчас</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data/x0.js?v=11"></script>
+  <script src="data/x1.js?v=11"></script>
+  <script src="data/x2.js?v=11"></script>
+  <script src="data/x3.js?v=11"></script>
+  <script src="data/x4.js?v=11"></script>
+  <script src="data/x5.js?v=11"></script>
+  <script src="data/x6.js?v=11"></script>
+  <script src="data/x7.js?v=11"></script>
+  <script src="data/x8.js?v=11"></script>
+  <script src="data/x9.js?v=11"></script>
+  <script src="data/x10.js?v=11"></script>
+  <script src="data/x11.js?v=11"></script>
+  <script src="data/chmeta.js?v=11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>
