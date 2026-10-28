@@ -57,7 +57,7 @@
       </section>
       <section id="view-chapters" class="view">
         <div class="view-header"><h2>Главы</h2></div>
-        <p class="muted" style="margin-bottom:16px">Все главы открыты. Каждая — примерно 100 слов. Это ориентир прогресса, а не уровень сложности.</p>
+        <p class="muted" style="margin-bottom:16px">Все главы открыты. Каждая — примерно 100 слов.</p>
         <div class="chapters-grid" id="chapters-grid"></div>
       </section>
       <section id="view-words" class="view">
@@ -82,7 +82,7 @@
         </div>
         <div class="flashcard-area">
           <div class="flashcard-wrap">
-            <button class="btn-fav" id="fc-fav" title="В избранное" aria-label="В избранное">☆</button>
+            <button class="btn-fav" id="fc-fav" title="В избранное">☆</button>
             <div class="flashcard" id="flashcard">
               <div class="flashcard-inner">
                 <div class="flashcard-front">
@@ -111,21 +111,21 @@
       </section>
       <section id="view-favorites" class="view">
         <div class="view-header"><h2>Избранное</h2></div>
-        <p class="muted" id="fav-empty" style="display:none;text-align:center;padding:24px">Пока пусто. Нажми ★ на карточке, чтобы добавить слово.</p>
+        <p class="muted" id="fav-empty" style="display:none;text-align:center;padding:24px">Пока пусто. Нажми ★ на карточке.</p>
         <div class="words-list" id="favorites-list"></div>
       </section>
       <section id="view-quiz" class="view">
         <div class="view-header"><h2>Тесты</h2></div>
         <div id="quiz-menu" class="quiz-menu">
-          <button class="quiz-type-card" data-quiz="en-ru"><strong>EN → RU</strong><span>Выбери перевод слова</span></button>
+          <button class="quiz-type-card" data-quiz="en-ru"><strong>EN → RU</strong><span>Выбери перевод</span></button>
           <button class="quiz-type-card" data-quiz="ru-en"><strong>RU → EN</strong><span>Выбери английское слово</span></button>
-          <button class="quiz-type-card" data-quiz="type"><strong>Напиши слово</strong><span>Введи перевод с клавиатуры</span></button>
+          <button class="quiz-type-card" data-quiz="type"><strong>Напиши слово</strong><span>Введи перевод</span></button>
           <button class="quiz-type-card" data-quiz="sentence"><strong>Предложения</strong><span>Заполни пропуск</span></button>
         </div>
         <div id="quiz-setup" class="quiz-setup hidden">
           <label>Глава<select id="quiz-chapter"><option value="all">Все главы</option></select></label>
           <label>Категория<select id="quiz-category"><option value="all">Все</option></select></label>
-          <label>Количество вопросов<select id="quiz-count"><option value="10">10</option><option value="20" selected>20</option><option value="30">30</option><option value="50">50</option></select></label>
+          <label>Количество<select id="quiz-count"><option value="10">10</option><option value="20" selected>20</option><option value="30">30</option><option value="50">50</option></select></label>
           <button class="btn btn-primary" id="quiz-start">Начать</button>
           <button class="btn btn-ghost" id="quiz-back-menu">← Назад</button>
         </div>
@@ -151,7 +151,7 @@
         <div class="progress-cards">
           <div class="progress-card"><h3>Изученные слова</h3><div class="big-number" id="prog-learned">0</div><div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div></div>
           <div class="progress-card"><h3>По главам</h3><div id="prog-chapters"></div></div>
-          <div class="progress-card"><h3>Серия дней</h3><div class="big-number" id="prog-streak">0</div><p class="muted">Заходи каждый день — серия растёт</p></div>
+          <div class="progress-card"><h3>Серия дней</h3><div class="big-number" id="prog-streak">0</div><p class="muted">Заходи каждый день</p></div>
           <div class="progress-card"><h3>Пройдено тестов</h3><div class="big-number" id="prog-quizzes">0</div></div>
           <div class="progress-card"><h3>В избранном</h3><div class="big-number" id="prog-favs">0</div></div>
         </div>
@@ -160,12 +160,9 @@
     </main>
     <footer class="footer"><p>Сделано для подготовки к собеседованию · GitHub Pages</p></footer>
   </div>
-  <script src="data/w0.js?v=5"></script>
-  <script src="data/w1.js?v=5"></script>
-  <script src="data/w2.js?v=5"></script>
-  <script src="data/w3.js?v=5"></script>
-  <script src="data/w4.js?v=5"></script>
-  <script src="data/w5.js?v=5"></script>
+  <script src="data/c1.js?v=5"></script>
+  <script src="data/c2.js?v=5"></script>
+  <script src="data/c3.js?v=5"></script>
   <script src="data/wmeta.js?v=5"></script>
   <script src="app.js?v=5"></script>
 </body>
