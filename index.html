@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Practice</title>
-  <link rel="stylesheet" href="styles-srs.css?v=21" />
+  <link rel="stylesheet" href="styles-srs.css?v=22" />
 </head>
 <body>
   <div id="boot" style="padding:24px;font-family:system-ui;text-align:center">Загрузка…</div>
@@ -23,7 +23,7 @@
         if (!v || /^https?:|\/\//.test(v)) return;
         var local = /^(js\/config\.js|js\/auth\.js)/.test(v.replace(/^\.\//, ""));
         if (local) {
-          el.setAttribute(attr, v.replace(/^\.\//, "").split("?")[0] + "?v=21");
+          el.setAttribute(attr, v.replace(/^\.\//, "").split("?")[0] + "?v=22");
         } else {
           el.setAttribute(attr, CDN + "/" + v.replace(/^\.\//, ""));
         }
@@ -33,7 +33,7 @@
 
       var headExtra = doc.createElement("link");
       headExtra.rel = "stylesheet";
-      headExtra.href = "styles-srs.css?v=21";
+      headExtra.href = "styles-srs.css?v=22";
       doc.head.appendChild(headExtra);
 
       var actions = doc.querySelector(".fc-actions");
@@ -73,9 +73,10 @@
       }
 
       setTimeout(function () {
-        loadScript("js/srs.js?v=21")
-          .then(function () { return loadScript("app.js?v=21"); })
-          .then(function () { return loadScript("js/quiz-keys.js?v=21"); })
+        loadScript("js/srs.js?v=22")
+          .then(function () { return loadScript("app.js?v=22"); })
+          .then(function () { return loadScript("js/quiz-keys.js?v=22"); })
+          .then(function () { return loadScript("js/srs-hooks.js?v=22"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");

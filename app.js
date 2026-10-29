@@ -1,4 +1,4 @@
-/* app.js v21 — CDN app + SRS progress + quality buttons + auth-safe boot */
+/* app.js v22 — CDN app + SRS progress + quality buttons + auth-safe boot */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -48,6 +48,9 @@
     var st = ensureProgress();
     var entry = SRS.applyQuality(SRS.getEntry(st, id), quality);
     SRS.setEntry(st, id, entry);
+    var day = SRS.todayISO();
+    if (!st.activity) st.activity = {};
+    st.activity[day] = (st.activity[day] || 0) + 1;
     saveRaw(st);
     var due = document.getElementById("due-today-count");
     if (due) due.textContent = String(SRS.countDue(st));
