@@ -1,3 +1,7 @@
+/* anti-flash dark default */
+html { background: #0b0d12; }
+html[data-theme="light"] { background: #f5f5f7; }
+
 /* SRS UI extensions */
 .fc-srs-actions {
   display: grid;

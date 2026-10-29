@@ -1,4 +1,4 @@
-/* app.js v22 — CDN app + SRS progress + quality buttons + auth-safe boot */
+/* app.js v29 — CDN app + SRS + dark default */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -103,6 +103,34 @@
     });
   }
 
+  function ensureDarkDefault() {
+    var st = loadRaw();
+    if (!st.themeUserSet) {
+      st.theme = "dark";
+      saveRaw(st);
+    }
+    document.documentElement.setAttribute("data-theme", st.theme || "dark");
+  }
+  ensureDarkDefault();
+
+  function wireThemeUserFlag() {
+    var btn = document.getElementById("theme-toggle");
+    if (!btn || btn.dataset.themeFlag) return;
+    btn.dataset.themeFlag = "1";
+    btn.addEventListener(
+      "click",
+      function () {
+        setTimeout(function () {
+          var st = loadRaw();
+          st.themeUserSet = true;
+          st.theme = document.documentElement.getAttribute("data-theme") || "dark";
+          saveRaw(st);
+        }, 0);
+      },
+      true
+    );
+  }
+
   ensureProgress();
 
   var s = document.createElement("script");
@@ -126,16 +154,19 @@
             if (merged.streak != null) st.streak = merged.streak;
             if (merged.lastVisit != null) st.lastVisit = merged.lastVisit;
             if (merged.quizzesDone != null) st.quizzesDone = merged.quizzesDone;
-            if (merged.theme) st.theme = merged.theme;
+            if (merged.theme && st.themeUserSet) st.theme = merged.theme;
             if (merged.activity) st.activity = merged.activity;
             if (merged.dailyNewLimit != null) st.dailyNewLimit = merged.dailyNewLimit;
             if (window.SRS) SRS.migrateState(st);
             saveRaw(st);
+            ensureDarkDefault();
             ensureProgress();
           },
         });
       }
       wireAccountFallback();
+      wireThemeUserFlag();
+      ensureDarkDefault();
       ensureProgress();
     }, 150);
     setInterval(ensureProgress, 5000);
