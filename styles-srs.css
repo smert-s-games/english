@@ -139,9 +139,39 @@ body.dark .hm-cell.l4 { background: #39d353; }
   .heatmap-legend .hm-cell { width: 18px; height: 18px; }
 }
 
-/* Fav + note only: column top-right outside card, layout unchanged */
+/* Card stays centered column; only fav+note float outside top-right */
+.flashcard-area {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 16px !important;
+  position: relative;
+  width: 100%;
+}
 .flashcard-wrap {
   position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  flex: none !important;
+}
+.fc-controls {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.fc-actions,
+.fc-progress {
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .fc-side-tools {
   position: absolute;
@@ -151,7 +181,6 @@ body.dark .hm-cell.l4 { background: #39d353; }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  pointer-events: auto;
 }
 .fc-side-btn,
 .flashcard-wrap #fc-fav.btn-fav,
@@ -163,8 +192,8 @@ body.dark .hm-cell.l4 { background: #39d353; }
   height: 44px;
   border-radius: 50%;
   border: 1px solid rgba(127,127,127,0.35);
-  background: var(--bg-elevated, #fff);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: var(--bg-elevated, #1a1a2e);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -225,11 +254,12 @@ body.dark .fc-note {
 }
 
 @media (max-width: 520px) {
-  .flashcard-wrap {
-    max-width: calc(100% - 56px);
+  .flashcard-area {
+    padding-right: 48px;
+    box-sizing: border-box;
   }
   .fc-side-tools {
-    right: -48px;
+    right: -44px;
   }
   .fc-side-btn,
   .flashcard-wrap #fc-fav.btn-fav,
