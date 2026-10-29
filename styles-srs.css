@@ -46,28 +46,45 @@
 }
 .ep-due-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Activity heatmap */
+/* Activity heatmap — larger, full-width mobile, centered desktop */
 .heatmap-card {
   grid-column: 1 / -1;
-  padding: 16px;
+  padding: 16px 12px 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.heatmap-card h3 {
+  margin-bottom: 12px;
+  text-align: center;
 }
 .heatmap-wrap {
+  width: 100%;
   overflow-x: auto;
-  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 0 8px;
+  display: flex;
+  justify-content: center;
 }
 .heatmap-grid {
+  --hm-size: clamp(16px, 7vw, 20px);
+  --hm-gap: clamp(3px, 1.4vw, 5px);
   display: grid;
   grid-auto-flow: column;
-  grid-template-rows: repeat(7, 12px);
-  grid-auto-columns: 12px;
-  gap: 3px;
-  width: max-content;
+  grid-template-rows: repeat(7, var(--hm-size));
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--hm-gap);
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 .hm-cell {
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
+  width: 100%;
+  height: var(--hm-size);
+  min-width: 0;
+  border-radius: 4px;
   background: rgba(127,127,127,0.18);
+  box-sizing: border-box;
 }
 .hm-cell.l1 { background: #9be9a8; }
 .hm-cell.l2 { background: #40c463; }
@@ -86,13 +103,52 @@ body.dark .hm-cell.l4 { background: #39d353; }
 .heatmap-legend {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 10px;
-  font-size: 0.8rem;
-  opacity: 0.85;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 0.85rem;
+  opacity: 0.9;
 }
-.heatmap-legend .hm-cell { display: inline-block; }
+.heatmap-legend .hm-cell {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  min-width: 14px;
+  flex-shrink: 0;
+}
 .heatmap-stats {
-  margin-top: 8px;
-  font-size: 0.9rem;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .heatmap-card {
+    padding: 20px 24px 24px;
+  }
+  .heatmap-grid {
+    --hm-size: 20px;
+    --hm-gap: 5px;
+    width: max-content;
+    max-width: 100%;
+    grid-auto-columns: var(--hm-size);
+  }
+  .hm-cell {
+    width: var(--hm-size);
+    height: var(--hm-size);
+  }
+  .heatmap-legend .hm-cell {
+    width: 16px;
+    height: 16px;
+  }
+}
+@media (min-width: 900px) {
+  .heatmap-grid {
+    --hm-size: 26px;
+    --hm-gap: 6px;
+  }
+  .heatmap-legend .hm-cell {
+    width: 18px;
+    height: 18px;
+  }
 }
