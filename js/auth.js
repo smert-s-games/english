@@ -93,7 +93,12 @@
   }
 
   function mergeProgress(local, remote) {
-    var learned = Object.assign({}, local.learned || {}, remote.learned || {});
+    var learned;
+    if (window.SRS && SRS.mergeLearnedMaps) {
+      learned = SRS.mergeLearnedMaps(local.learned || {}, remote.learned || {});
+    } else {
+      learned = Object.assign({}, local.learned || {}, remote.learned || {});
+    }
     var favorites = Object.assign({}, local.favorites || {}, remote.favorites || {});
     var streak = Math.max(local.streak || 0, remote.streak || 0);
     var quizzes = Math.max(local.quizzesDone || 0, remote.quizzes_done || remote.quizzesDone || 0);
@@ -101,14 +106,19 @@
     var rVisit = remote.last_visit || remote.lastVisit || null;
     if (rVisit && (!lastVisit || String(rVisit) > String(lastVisit))) lastVisit = rVisit;
     var theme = local.theme || remote.theme || "light";
-    return {
+    var out = {
       learned: learned,
       favorites: favorites,
       streak: streak,
       lastVisit: lastVisit,
       quizzesDone: quizzes,
       theme: theme,
+      srsMigrated: true,
+      dailyNewLimit: local.dailyNewLimit != null ? local.dailyNewLimit : (remote.dailyNewLimit != null ? remote.dailyNewLimit : 10),
+      activity: Object.assign({}, remote.activity || {}, local.activity || {}),
     };
+    if (window.SRS) SRS.migrateState(out);
+    return out;
   }
 
   function stateToRow(state) {
