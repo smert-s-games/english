@@ -1,8 +1,26 @@
-/* app.js v20 */
-(async function(){
-var b64="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";
-var bin=atob(b64),u8=new Uint8Array(bin.length);
-for(var i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
-var ab=await new Response(new Blob([u8]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
-var s=document.createElement("script");s.text=new TextDecoder().decode(ab);document.head.appendChild(s);
+/* app.js v20 - CDN app + SRS migrate/due on boot */
+(function () {
+  "use strict";
+  var CDN = "https://cdn.jsdelivr.net/gh/smert-s-games/english@9eaece21677c1d1115d3ab79567833fdfc30f8c0/app.js";
+  var s = document.createElement("script");
+  s.src = CDN;
+  s.onload = function () {
+    try {
+      if (window.SRS) {
+        var raw = localStorage.getItem("english-practice-v1");
+        if (raw) {
+          var st = JSON.parse(raw);
+          SRS.migrateState(st);
+          localStorage.setItem("english-practice-v1", JSON.stringify(st));
+        }
+        var due = document.getElementById("due-today-count");
+        if (due) {
+          var st2 = JSON.parse(localStorage.getItem("english-practice-v1") || "{}");
+          due.textContent = String(SRS.countDue(st2));
+        }
+      }
+    } catch (e) { console.warn(e); }
+  };
+  s.onerror = function () { console.error("app CDN load failed"); };
+  document.head.appendChild(s);
 })();
