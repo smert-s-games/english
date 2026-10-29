@@ -38,23 +38,52 @@
     };
   }
 
-  /** One-time migration: learned[id]=true → object; flag srsMigrated */
+  /**
+   * Progress DB hygiene: always normalize learned map.
+   * true → {level:3,...}; missing fields filled; safe to call every load.
+   */
   function migrateState(state) {
-    if (!state || state.srsMigrated) {
-      if (state && !state.learned) state.learned = {};
-      if (state && state.dailyNewLimit == null) state.dailyNewLimit = 10;
-      return state;
-    }
-    var learned = state.learned || {};
+    if (!state) return state;
+    if (!state.learned) state.learned = {};
+    var learned = state.learned;
     var next = {};
+    var changed = false;
     Object.keys(learned).forEach(function (id) {
-      next[id] = normalizeEntry(learned[id]);
+      var raw = learned[id];
+      var norm = normalizeEntry(raw);
+      next[id] = norm;
+      if (raw === true || typeof raw !== "object" || raw === null) changed = true;
+      else if (raw.level !== norm.level || raw.due !== norm.due || (raw.lapses || 0) !== norm.lapses) changed = true;
     });
     state.learned = next;
-    state.srsMigrated = true;
-    if (state.dailyNewLimit == null) state.dailyNewLimit = 10;
-    if (!state.activity) state.activity = {};
+    if (!state.srsMigrated) {
+      state.srsMigrated = true;
+      changed = true;
+    }
+    if (state.dailyNewLimit == null) {
+      state.dailyNewLimit = 10;
+      changed = true;
+    }
+    if (!state.activity) {
+      state.activity = {};
+      changed = true;
+    }
+    state._progressDirty = changed;
     return state;
+  }
+
+  function exportProgress(state) {
+    return {
+      version: 1,
+      srsMigrated: !!state.srsMigrated,
+      dailyNewLimit: state.dailyNewLimit != null ? state.dailyNewLimit : 10,
+      learned: state.learned || {},
+      favorites: state.favorites || {},
+      activity: state.activity || {},
+      streak: state.streak || 0,
+      lastVisit: state.lastVisit || null,
+      quizzesDone: state.quizzesDone || 0,
+    };
   }
 
   function getEntry(state, id) {
@@ -90,10 +119,6 @@
     return addDays(todayISO(), days);
   }
 
-  /**
-   * quality: again | hard | good | easy
-   * returns updated entry
-   */
   function applyQuality(entry, quality) {
     entry = normalizeEntry(entry);
     var q = quality || "good";
@@ -266,5 +291,6 @@
     levenshtein: levenshtein,
     gradeTyped: gradeTyped,
     mergeLearnedMaps: mergeLearnedMaps,
+    exportProgress: exportProgress,
   };
 })(typeof window !== "undefined" ? window : this);
