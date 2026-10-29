@@ -23,22 +23,19 @@
           el.setAttribute(attr, CDN + "/" + v.replace(/^\.\//, ""));
         }
       });
-      doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) {
-        el.remove();
-      });
+      doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) { el.remove(); });
       var headExtra = doc.createElement("link");
       headExtra.rel = "stylesheet";
       headExtra.href = "styles-srs.css?v=20";
       doc.head.appendChild(headExtra);
-
       var actions = doc.querySelector(".fc-actions");
       if (actions) {
         actions.className = "fc-actions fc-srs-actions";
         actions.innerHTML =
-          '<button class="btn btn-srs again" id="fc-again" title="Снова">Снова</button>' +
-          '<button class="btn btn-srs hard" id="fc-hard" title="Трудно">Трудно</button>' +
-          '<button class="btn btn-srs good" id="fc-good" title="Хорошо">Хорошо</button>' +
-          '<button class="btn btn-srs easy" id="fc-easy" title="Легко">Легко</button>';
+          '<button class="btn btn-srs again" id="fc-again">Снова</button>' +
+          '<button class="btn btn-srs hard" id="fc-hard">Трудно</button>' +
+          '<button class="btn btn-srs good" id="fc-good">Хорошо</button>' +
+          '<button class="btn btn-srs easy" id="fc-easy">Легко</button>';
       }
       var stats = doc.querySelector(".stats-row");
       if (stats && !doc.getElementById("due-today-block")) {
@@ -50,32 +47,28 @@
           '<button type="button" class="btn btn-primary" id="due-today-start">Начать повторение</button>';
         stats.insertAdjacentElement("afterend", due);
       }
-
       document.open();
       document.write("<!DOCTYPE html>" + doc.documentElement.outerHTML);
       document.close();
       setTimeout(function () {
-        function add(src) {
-          var s = document.createElement("script");
-          s.src = src;
-          document.body.appendChild(s);
-          return s;
-        }
-        add("js/srs.js?v=20");
-        setTimeout(function () {
-          add("js/app-patch-a.js?v=20");
-          setTimeout(function () {
-            add("js/app-patch-b.js?v=20");
-            setTimeout(function () {
-              add("app.js?v=20");
-              setTimeout(function () {
-                var q = document.createElement("script");
-                q.src = "js/quiz-keys.js?v=20";
-                document.body.appendChild(q);
-              }, 400);
-            }, 80);
-          }, 80);
-        }, 80);
+        var srs = document.createElement("script");
+        srs.src = "js/srs.js?v=20";
+        srs.onload = function () {
+          var app = document.createElement("script");
+          app.src = "app.js?v=20";
+          app.onload = function () {
+            var q = document.createElement("script");
+            q.src = "js/quiz-keys.js?v=20";
+            document.body.appendChild(q);
+          };
+          app.onerror = function () {
+            var fallback = document.createElement("script");
+            fallback.src = "https://cdn.jsdelivr.net/gh/smert-s-games/english@9eaece21677c1d1115d3ab79567833fdfc30f8c0/app.js";
+            document.body.appendChild(fallback);
+          };
+          document.body.appendChild(app);
+        };
+        document.body.appendChild(srs);
       }, 200);
     } catch (e) {
       document.getElementById("boot").textContent = "Ошибка: " + e;
