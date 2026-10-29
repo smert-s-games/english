@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Practice</title>
-  <link rel="stylesheet" href="styles-srs.css?v=22" />
+  <link rel="stylesheet" href="styles-srs.css?v=23" />
 </head>
 <body>
   <div id="boot" style="padding:24px;font-family:system-ui;text-align:center">Загрузка…</div>
@@ -23,7 +23,7 @@
         if (!v || /^https?:|\/\//.test(v)) return;
         var local = /^(js\/config\.js|js\/auth\.js)/.test(v.replace(/^\.\//, ""));
         if (local) {
-          el.setAttribute(attr, v.replace(/^\.\//, "").split("?")[0] + "?v=22");
+          el.setAttribute(attr, v.replace(/^\.\//, "").split("?")[0] + "?v=23");
         } else {
           el.setAttribute(attr, CDN + "/" + v.replace(/^\.\//, ""));
         }
@@ -33,7 +33,7 @@
 
       var headExtra = doc.createElement("link");
       headExtra.rel = "stylesheet";
-      headExtra.href = "styles-srs.css?v=22";
+      headExtra.href = "styles-srs.css?v=23";
       doc.head.appendChild(headExtra);
 
       var actions = doc.querySelector(".fc-actions");
@@ -58,6 +58,15 @@
         stats.insertAdjacentElement("afterend", due);
       }
 
+      var progCards = doc.querySelector("#view-progress .progress-cards");
+      if (progCards && !doc.getElementById("activity-heatmap-card")) {
+        var hm = doc.createElement("div");
+        hm.className = "progress-card heatmap-card";
+        hm.id = "activity-heatmap-card";
+        hm.innerHTML = "<h3>Активность (12 недель)</h3><div id=\"activity-heatmap\"></div>";
+        progCards.appendChild(hm);
+      }
+
       document.open();
       document.write("<!DOCTYPE html>" + doc.documentElement.outerHTML);
       document.close();
@@ -73,10 +82,11 @@
       }
 
       setTimeout(function () {
-        loadScript("js/srs.js?v=22")
-          .then(function () { return loadScript("app.js?v=22"); })
-          .then(function () { return loadScript("js/quiz-keys.js?v=22"); })
-          .then(function () { return loadScript("js/srs-hooks.js?v=22"); })
+        loadScript("js/srs.js?v=23")
+          .then(function () { return loadScript("app.js?v=23"); })
+          .then(function () { return loadScript("js/quiz-keys.js?v=23"); })
+          .then(function () { return loadScript("js/srs-hooks.js?v=23"); })
+          .then(function () { return loadScript("js/heatmap.js?v=23"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");
