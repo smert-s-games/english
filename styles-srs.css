@@ -273,3 +273,32 @@ body.dark .fc-note {
     font-size: 1.1rem;
   }
 }
+
+/* Due session banner */
+.due-session-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 4px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(30, 132, 73, 0.15);
+  border: 1px solid rgba(30, 132, 73, 0.35);
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+.due-session-banner.hidden { display: none !important; }
+.due-session-exit {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+body.due-session-on #fc-chapter,
+body.due-session-on #fc-category,
+body.due-session-on #fc-learned {
+  opacity: 0.5;
+  pointer-events: none;
+}
