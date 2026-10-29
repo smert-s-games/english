@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Practice — изучение английского</title>
-  <link rel="stylesheet" href="styles.css?v=12" />
+  <link rel="stylesheet" href="styles.css?v=13" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -115,24 +115,35 @@
       <section id="view-quiz" class="view">
         <div class="view-header"><h2>Тесты</h2></div>
         <div id="quiz-menu" class="quiz-menu">
-          <button class="quiz-type-card" data-quiz="en-ru"><strong>EN → RU</strong><span>Выбери перевод</span></button>
-          <button class="quiz-type-card" data-quiz="ru-en"><strong>RU → EN</strong><span>Выбери английское слово</span></button>
-          <button class="quiz-type-card" data-quiz="type"><strong>Напиши слово</strong><span>Введи перевод</span></button>
-          <button class="quiz-type-card" data-quiz="sentence"><strong>Предложения</strong><span>Заполни пропуск</span></button>
+          <p class="muted" style="margin-bottom:8px">Тематические тесты — вопросы по выбранной теме, без общей мешанины.</p>
+          <div id="theme-packs" class="theme-packs"></div>
+          <h3 class="quiz-section-title">Свободный режим</h3>
+          <p class="muted" style="margin-bottom:8px">Любые слова, свой формат.</p>
+          <button class="quiz-type-card" data-quiz="en-ru" data-free="1"><strong>EN → RU</strong><span>Выбери перевод</span></button>
+          <button class="quiz-type-card" data-quiz="ru-en" data-free="1"><strong>RU → EN</strong><span>Выбери английское слово</span></button>
+          <button class="quiz-type-card" data-quiz="type" data-free="1"><strong>Напиши слово</strong><span>Введи перевод</span></button>
         </div>
         <div id="quiz-setup" class="quiz-setup hidden">
-          <label>Глава<select id="quiz-chapter"><option value="all">Все главы</option></select></label>
-          <label>Категория<select id="quiz-category"><option value="all">Все</option></select></label>
-          <label>Слова<select id="quiz-learned">
+          <h3 id="quiz-setup-title" style="margin-bottom:8px">Настройка</h3>
+          <p class="muted" id="quiz-setup-desc" style="margin-bottom:12px"></p>
+          <label id="quiz-mode-wrap">Формат<select id="quiz-mode">
+            <option value="en-ru">EN → RU</option>
+            <option value="ru-en">RU → EN</option>
+            <option value="type">Напиши слово</option>
+            <option value="mixed" selected>Смешанный</option>
+          </select></label>
+          <label id="quiz-chapter-wrap">Глава<select id="quiz-chapter"><option value="all">Все главы</option></select></label>
+          <label id="quiz-category-wrap">Категория<select id="quiz-category"><option value="all">Все</option></select></label>
+          <label id="quiz-learned-wrap">Слова<select id="quiz-learned">
             <option value="all">Все слова</option>
             <option value="learned">Только выученные</option>
             <option value="unlearned" selected>Только невыученные</option>
           </select></label>
           <label>Количество<select id="quiz-count">
             <option value="10">10</option>
-            <option value="20" selected>20</option>
+            <option value="15" selected>15</option>
+            <option value="20">20</option>
             <option value="30">30</option>
-            <option value="50">50</option>
           </select></label>
           <button class="btn btn-primary" id="quiz-start">Начать</button>
           <button class="btn btn-ghost" id="quiz-back-menu">← Назад</button>
@@ -241,22 +252,22 @@
     </div>
   </div>
 
-  <script src="data/x0.js?v=12"></script>
-  <script src="data/x1.js?v=12"></script>
-  <script src="data/x2.js?v=12"></script>
-  <script src="data/x3.js?v=12"></script>
-  <script src="data/x4.js?v=12"></script>
-  <script src="data/x5.js?v=12"></script>
-  <script src="data/x6.js?v=12"></script>
-  <script src="data/x7.js?v=12"></script>
-  <script src="data/x8.js?v=12"></script>
-  <script src="data/x9.js?v=12"></script>
-  <script src="data/x10.js?v=12"></script>
-  <script src="data/x11.js?v=12"></script>
-  <script src="data/chmeta.js?v=12"></script>
+  <script src="data/x0.js?v=13"></script>
+  <script src="data/x1.js?v=13"></script>
+  <script src="data/x2.js?v=13"></script>
+  <script src="data/x3.js?v=13"></script>
+  <script src="data/x4.js?v=13"></script>
+  <script src="data/x5.js?v=13"></script>
+  <script src="data/x6.js?v=13"></script>
+  <script src="data/x7.js?v=13"></script>
+  <script src="data/x8.js?v=13"></script>
+  <script src="data/x9.js?v=13"></script>
+  <script src="data/x10.js?v=13"></script>
+  <script src="data/x11.js?v=13"></script>
+  <script src="data/chmeta.js?v=13"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js?v=12"></script>
-  <script src="js/auth.js?v=12"></script>
-  <script src="app.js?v=12"></script>
+  <script src="js/config.js?v=13"></script>
+  <script src="js/auth.js?v=13"></script>
+  <script src="app.js?v=13"></script>
 </body>
 </html>
