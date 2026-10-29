@@ -485,12 +485,19 @@
     }
     if (quizType === "sentence") {
       quizQuestions = pickN(SENTENCES, count).map(function (s) {
-        return { type: "sentence", text: s.text, prompt: s.text, correct: s.answer, options: s.options };
+        return {
+          type: "sentence",
+          text: s.text,
+          prompt: s.text,
+          correct: s.answer,
+          options: shuffle((s.options || []).slice()),
+        };
       });
     } else {
       quizQuestions = pickN(pool, count).map(function (w) {
         if (quizType === "en-ru") {
-          var wrong = uniqueDistractors(pool, w.ru, "ru", 3);
+          var distractPool = pool.length >= 8 ? pool : WORDS;
+          var wrong = uniqueDistractors(distractPool, w.ru, "ru", 3);
           return {
             type: "choice", prompt: w.en, sub: w.tr ? "[" + w.tr + "]" : "",
             correct: w.ru, options: shuffle([w.ru].concat(wrong)),
@@ -498,7 +505,8 @@
           };
         }
         if (quizType === "ru-en") {
-          var wrong2 = uniqueDistractors(pool, w.en, "en", 3);
+          var distractPool2 = pool.length >= 8 ? pool : WORDS;
+          var wrong2 = uniqueDistractors(distractPool2, w.en, "en", 3);
           return {
             type: "choice", prompt: w.ru, sub: "",
             correct: w.en, options: shuffle([w.en].concat(wrong2)),
@@ -565,7 +573,8 @@
       document.getElementById("quiz-question").innerHTML =
         escapeHtml(q.prompt || q.text || "") +
         (q.sub ? '<div class="muted">' + escapeHtml(q.sub) + "</div>" : "");
-      (q.options || []).forEach(function (opt) {
+      var displayOpts = shuffle((q.options || []).slice());
+      displayOpts.forEach(function (opt) {
         var btn = document.createElement("button");
         btn.className = "quiz-option";
         btn.textContent = opt;
