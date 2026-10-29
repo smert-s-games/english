@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Practice — изучение английского</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/smert-s-games/english@2174573a9e65754c73af3a39fd3ea23b534bce1b/styles.css" />
-  <link rel="stylesheet" href="styles.css?v=19" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>English Practice</title>
+  <link rel="stylesheet" href="styles-srs.css?v=20" />
 </head>
 <body>
   <div id="boot" style="padding:24px;font-family:system-ui;text-align:center">Загрузка…</div>
@@ -25,21 +23,62 @@
           el.setAttribute(attr, CDN + "/" + v.replace(/^\.\//, ""));
         }
       });
-      // keep our local styles override
-      var extra = doc.createElement("link");
-      extra.rel = "stylesheet";
-      extra.href = "styles.css?v=19";
-      doc.head.appendChild(extra);
+      doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) {
+        el.remove();
+      });
+      var headExtra = doc.createElement("link");
+      headExtra.rel = "stylesheet";
+      headExtra.href = "styles-srs.css?v=20";
+      doc.head.appendChild(headExtra);
+
+      var actions = doc.querySelector(".fc-actions");
+      if (actions) {
+        actions.className = "fc-actions fc-srs-actions";
+        actions.innerHTML =
+          '<button class="btn btn-srs again" id="fc-again" title="Снова">Снова</button>' +
+          '<button class="btn btn-srs hard" id="fc-hard" title="Трудно">Трудно</button>' +
+          '<button class="btn btn-srs good" id="fc-good" title="Хорошо">Хорошо</button>' +
+          '<button class="btn btn-srs easy" id="fc-easy" title="Легко">Легко</button>';
+      }
+      var stats = doc.querySelector(".stats-row");
+      if (stats && !doc.getElementById("due-today-block")) {
+        var due = doc.createElement("div");
+        due.className = "due-today-block";
+        due.id = "due-today-block";
+        due.innerHTML =
+          '<div class="due-today-text">Сегодня к повторению: <strong id="due-today-count">0</strong> слов</div>' +
+          '<button type="button" class="btn btn-primary" id="due-today-start">Начать повторение</button>';
+        stats.insertAdjacentElement("afterend", due);
+      }
+
       document.open();
       document.write("<!DOCTYPE html>" + doc.documentElement.outerHTML);
       document.close();
       setTimeout(function () {
-        var s = document.createElement("script");
-        s.src = "js/quiz-keys.js?v=19";
-        document.body.appendChild(s);
-      }, 600);
+        function add(src) {
+          var s = document.createElement("script");
+          s.src = src;
+          document.body.appendChild(s);
+          return s;
+        }
+        add("js/srs.js?v=20");
+        setTimeout(function () {
+          add("js/app-patch-a.js?v=20");
+          setTimeout(function () {
+            add("js/app-patch-b.js?v=20");
+            setTimeout(function () {
+              add("app.js?v=20");
+              setTimeout(function () {
+                var q = document.createElement("script");
+                q.src = "js/quiz-keys.js?v=20";
+                document.body.appendChild(q);
+              }, 400);
+            }, 80);
+          }, 80);
+        }, 80);
+      }, 200);
     } catch (e) {
-      document.getElementById("boot").textContent = "Ошибка загрузки: " + e;
+      document.getElementById("boot").textContent = "Ошибка: " + e;
     }
   })();
   </script>
