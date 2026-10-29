@@ -114,7 +114,7 @@
       quizzesDone: quizzes,
       theme: theme,
       srsMigrated: true,
-      dailyNewLimit: local.dailyNewLimit != null ? local.dailyNewLimit : (remote.dailyNewLimit != null ? remote.dailyNewLimit : 10),
+      dailyNewLimit: local.dailyNewLimit != null ? local.dailyNewLimit : (remote.daily_new_limit != null ? remote.daily_new_limit : (remote.dailyNewLimit != null ? remote.dailyNewLimit : 10)),
       activity: Object.assign({}, remote.activity || {}, local.activity || {}),
     };
     if (window.SRS) SRS.migrateState(out);
@@ -122,7 +122,7 @@
   }
 
   function stateToRow(state) {
-    return {
+    var row = {
       user_id: authUser.id,
       learned: state.learned || {},
       favorites: state.favorites || {},
@@ -131,6 +131,10 @@
       quizzes_done: state.quizzesDone || 0,
       theme: state.theme || "light",
     };
+    row.activity = state.activity || {};
+    row.daily_new_limit = state.dailyNewLimit != null ? state.dailyNewLimit : 10;
+    row.srs_migrated = state.srsMigrated !== false;
+    return row;
   }
 
   async function pullCloudProgress() {
@@ -164,7 +168,16 @@
     try {
       var row = stateToRow(getState());
       var res = await sb.from("english_progress").upsert(row, { onConflict: "user_id" });
-      if (res.error) throw res.error;
+      if (res.error) {
+        // retry without optional SRS columns if schema not migrated
+        if (String(res.error.message || "").indexOf("column") !== -1) {
+          delete row.activity;
+          delete row.daily_new_limit;
+          delete row.srs_migrated;
+          res = await sb.from("english_progress").upsert(row, { onConflict: "user_id" });
+        }
+        if (res.error) throw res.error;
+      }
       if (force) setSyncMsg("Сохранено в облако.");
     } catch (e) {
       setSyncMsg("Ошибка сохранения: " + mapAuthError(e));
