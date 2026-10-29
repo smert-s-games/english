@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>English Practice — изучение английского</title>
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=14" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -115,23 +115,18 @@
       <section id="view-quiz" class="view">
         <div class="view-header"><h2>Тесты</h2></div>
         <div id="quiz-menu" class="quiz-menu">
-          <p class="muted" style="margin-bottom:8px">Тематические тесты — вопросы по выбранной теме, без общей мешанины.</p>
+          <p class="muted" style="margin-bottom:8px">Тематические тесты — только слова выбранной темы, без общей мешанины.</p>
           <div id="theme-packs" class="theme-packs"></div>
           <h3 class="quiz-section-title">Свободный режим</h3>
-          <p class="muted" style="margin-bottom:8px">Любые слова, свой формат.</p>
+          <p class="muted" style="margin-bottom:8px">Любые слова и свой формат.</p>
           <button class="quiz-type-card" data-quiz="en-ru" data-free="1"><strong>EN → RU</strong><span>Выбери перевод</span></button>
           <button class="quiz-type-card" data-quiz="ru-en" data-free="1"><strong>RU → EN</strong><span>Выбери английское слово</span></button>
           <button class="quiz-type-card" data-quiz="type" data-free="1"><strong>Напиши слово</strong><span>Введи перевод</span></button>
+          <button class="quiz-type-card" data-quiz="sentence" data-free="1"><strong>Предложения</strong><span>Заполни пропуск</span></button>
         </div>
         <div id="quiz-setup" class="quiz-setup hidden">
           <h3 id="quiz-setup-title" style="margin-bottom:8px">Настройка</h3>
           <p class="muted" id="quiz-setup-desc" style="margin-bottom:12px"></p>
-          <label id="quiz-mode-wrap">Формат<select id="quiz-mode">
-            <option value="en-ru">EN → RU</option>
-            <option value="ru-en">RU → EN</option>
-            <option value="type">Напиши слово</option>
-            <option value="mixed" selected>Смешанный</option>
-          </select></label>
           <label id="quiz-chapter-wrap">Глава<select id="quiz-chapter"><option value="all">Все главы</option></select></label>
           <label id="quiz-category-wrap">Категория<select id="quiz-category"><option value="all">Все</option></select></label>
           <label id="quiz-learned-wrap">Слова<select id="quiz-learned">
@@ -252,22 +247,23 @@
     </div>
   </div>
 
-  <script src="data/x0.js?v=13"></script>
-  <script src="data/x1.js?v=13"></script>
-  <script src="data/x2.js?v=13"></script>
-  <script src="data/x3.js?v=13"></script>
-  <script src="data/x4.js?v=13"></script>
-  <script src="data/x5.js?v=13"></script>
-  <script src="data/x6.js?v=13"></script>
-  <script src="data/x7.js?v=13"></script>
-  <script src="data/x8.js?v=13"></script>
-  <script src="data/x9.js?v=13"></script>
-  <script src="data/x10.js?v=13"></script>
-  <script src="data/x11.js?v=13"></script>
-  <script src="data/chmeta.js?v=13"></script>
+  <script src="data/x0.js?v=14"></script>
+  <script src="data/x1.js?v=14"></script>
+  <script src="data/x2.js?v=14"></script>
+  <script src="data/x3.js?v=14"></script>
+  <script src="data/x4.js?v=14"></script>
+  <script src="data/x5.js?v=14"></script>
+  <script src="data/x6.js?v=14"></script>
+  <script src="data/x7.js?v=14"></script>
+  <script src="data/x8.js?v=14"></script>
+  <script src="data/x9.js?v=14"></script>
+  <script src="data/x10.js?v=14"></script>
+  <script src="data/x11.js?v=14"></script>
+  <script src="data/chmeta.js?v=14"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js?v=13"></script>
-  <script src="js/auth.js?v=13"></script>
-  <script src="app.js?v=13"></script>
+  <script src="js/config.js?v=14"></script>
+  <script src="js/auth.js?v=14"></script>
+  <script src="https://cdn.jsdelivr.net/gh/smert-s-games/english@9eaece21677c1d1115d3ab79567833fdfc30f8c0/app.js"></script>
+  <script src="js/quiz-themes.js?v=14"></script>
 </body>
 </html>
