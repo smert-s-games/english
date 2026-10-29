@@ -12,7 +12,7 @@
       margin: 0;
     }
   </style>
-  <link rel="stylesheet" href="styles-srs.css?v=29" />
+  <link rel="stylesheet" href="styles-srs.css?v=30" />
   <script>
     (function () {
       try {
@@ -58,7 +58,7 @@
 
       var headExtra = doc.createElement("link");
       headExtra.rel = "stylesheet";
-      headExtra.href = "styles-srs.css?v=29";
+      headExtra.href = "styles-srs.css?v=30";
       doc.head.appendChild(headExtra);
 
       var anti = doc.createElement("style");
@@ -124,11 +124,12 @@
 
       setTimeout(function () {
         loadScript("js/srs.js?v=23")
-          .then(function () { return loadScript("app.js?v=29"); })
+          .then(function () { return loadScript("app.js?v=30"); })
           .then(function () { return loadScript("js/quiz-keys.js?v=23"); })
           .then(function () { return loadScript("js/srs-hooks.js?v=23"); })
           .then(function () { return loadScript("js/heatmap.js?v=23"); })
           .then(function () { return loadScript("js/notes.js?v=28"); })
+          .then(function () { return loadScript("js/due-session.js?v=30"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");

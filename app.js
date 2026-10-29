@@ -1,4 +1,4 @@
-/* app.js v29 — CDN app + SRS + dark default */
+/* app.js v30 — CDN app + SRS + dark default + due-aware quality */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -67,6 +67,9 @@
         function (e) {
           e.preventDefault();
           e.stopImmediatePropagation();
+          if (window.DueSession && DueSession.isActive && DueSession.isActive()) {
+            return;
+          }
           applyQuality(quality);
           var next = document.getElementById("fc-next");
           if (next) next.click();
