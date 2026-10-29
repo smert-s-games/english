@@ -141,11 +141,7 @@
     if (!sb || !authUser || !getState || !setState) return;
     setSyncMsg("Загружаю прогресс…");
     try {
-      var res = await sb
-        .from("english_progress")
-        .select("*")
-        .eq("user_id", authUser.id)
-        .maybeSingle();
+      var res = await sb.from("english_progress").select("*").eq("user_id", authUser.id).maybeSingle();
       if (res.error) throw res.error;
       var state = getState();
       if (res.data) {
@@ -169,7 +165,6 @@
       var row = stateToRow(getState());
       var res = await sb.from("english_progress").upsert(row, { onConflict: "user_id" });
       if (res.error) {
-        // retry without optional SRS columns if schema not migrated
         if (String(res.error.message || "").indexOf("column") !== -1) {
           delete row.activity;
           delete row.daily_new_limit;
@@ -297,9 +292,15 @@
   window.EnglishAuth = {
     init: function (opts) {
       opts = opts || {};
-      getState = opts.getState;
-      setState = opts.setState;
-      onProgressMerged = opts.onProgressMerged;
+      getState = opts.getState || getState;
+      setState = opts.setState || setState;
+      onProgressMerged = opts.onProgressMerged || onProgressMerged;
+      if (window.__EP_AUTH_INIT) {
+        if (opts.getState) getState = opts.getState;
+        if (opts.setState) setState = opts.setState;
+        return;
+      }
+      window.__EP_AUTH_INIT = true;
       bindAuthUI();
       bootAuth();
     },
