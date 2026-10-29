@@ -46,7 +46,7 @@
 }
 .ep-due-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Activity heatmap — larger, full-width mobile, centered desktop */
+/* Activity heatmap */
 .heatmap-card {
   grid-column: 1 / -1;
   padding: 16px 12px 20px;
@@ -123,9 +123,7 @@ body.dark .hm-cell.l4 { background: #39d353; }
   text-align: center;
 }
 @media (min-width: 640px) {
-  .heatmap-card {
-    padding: 20px 24px 24px;
-  }
+  .heatmap-card { padding: 20px 24px 24px; }
   .heatmap-grid {
     --hm-size: 20px;
     --hm-gap: 5px;
@@ -133,22 +131,70 @@ body.dark .hm-cell.l4 { background: #39d353; }
     max-width: 100%;
     grid-auto-columns: var(--hm-size);
   }
-  .hm-cell {
-    width: var(--hm-size);
-    height: var(--hm-size);
-  }
-  .heatmap-legend .hm-cell {
-    width: 16px;
-    height: 16px;
-  }
+  .hm-cell { width: var(--hm-size); height: var(--hm-size); }
+  .heatmap-legend .hm-cell { width: 16px; height: 16px; }
 }
 @media (min-width: 900px) {
-  .heatmap-grid {
-    --hm-size: 26px;
-    --hm-gap: 6px;
-  }
-  .heatmap-legend .hm-cell {
-    width: 18px;
-    height: 18px;
-  }
+  .heatmap-grid { --hm-size: 26px; --hm-gap: 6px; }
+  .heatmap-legend .hm-cell { width: 18px; height: 18px; }
+}
+
+/* Word notes */
+.fc-note-box {
+  margin-top: 14px;
+  text-align: left;
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.fc-note-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: 0.85;
+}
+.fc-note {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid rgba(127,127,127,0.35);
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 64px;
+  background: rgba(255,255,255,0.9);
+  color: inherit;
+}
+[data-theme="dark"] .fc-note,
+body.dark .fc-note {
+  background: rgba(0,0,0,0.35);
+  border-color: rgba(255,255,255,0.2);
+  color: #eee;
+}
+.fc-note-hint { font-size: 0.75rem; margin-top: 4px; }
+.word-note-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 6px;
+  opacity: 0.7;
+  line-height: 1;
+}
+.word-note-btn:hover { opacity: 1; }
+.word-note-badge {
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-left: 4px;
+}
+.note-overlay .note-modal {
+  max-width: 420px;
+  width: 92%;
+}
+.note-textarea {
+  margin: 12px 0 16px;
+  min-height: 120px;
 }
