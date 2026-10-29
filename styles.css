@@ -1,0 +1,40 @@
+@import url("https://cdn.jsdelivr.net/gh/smert-s-games/english@2174573a9e65754c73af3a39fd3ea23b534bce1b/styles.css");
+
+/* Quiz keyboard badges & exit */
+.quiz-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.quiz-exit-btn { padding: 6px 12px; font-size: 0.85rem; }
+.quiz-kb-hint { font-size: 0.75rem; white-space: nowrap; }
+.quiz-option { display: flex; align-items: center; gap: 12px; }
+.opt-key {
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.quiz-option.correct .opt-key {
+  background: var(--success-soft);
+  border-color: var(--success);
+  color: var(--success);
+}
+.quiz-option.wrong .opt-key {
+  background: var(--error-soft);
+  border-color: var(--error);
+  color: var(--error);
+}
+.opt-text { flex: 1; text-align: left; }
+@media (max-width: 480px) {
+  .quiz-kb-hint, .opt-key { display: none; }
+}

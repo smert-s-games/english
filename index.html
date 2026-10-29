@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Practice — изучение английского</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/smert-s-games/english@2174573a9e65754c73af3a39fd3ea23b534bce1b/styles.css" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="boot" style="padding:24px;font-family:system-ui;text-align:center">Загрузка…</div>
+  <script>
+  (async function () {
+    var CDN = "https://cdn.jsdelivr.net/gh/smert-s-games/english@2174573a9e65754c73af3a39fd3ea23b534bce1b";
+    try {
+      var r = await fetch(CDN + "/index.html");
+      var html = await r.text();
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, "text/html");
+      doc.querySelectorAll("script[src],link[href]").forEach(function (el) {
+        var attr = el.tagName === "LINK" ? "href" : "src";
+        var v = el.getAttribute(attr);
+        if (v && !/^https?:|\/\//.test(v)) {
+          el.setAttribute(attr, CDN + "/" + v.replace(/^\.\//, ""));
+        }
+      });
+      // keep our local styles override
+      var extra = doc.createElement("link");
+      extra.rel = "stylesheet";
+      extra.href = "styles.css?v=19";
+      doc.head.appendChild(extra);
+      document.open();
+      document.write("<!DOCTYPE html>" + doc.documentElement.outerHTML);
+      document.close();
+      setTimeout(function () {
+        var s = document.createElement("script");
+        s.src = "js/quiz-keys.js?v=19";
+        document.body.appendChild(s);
+      }, 600);
+    } catch (e) {
+      document.getElementById("boot").textContent = "Ошибка загрузки: " + e;
+    }
+  })();
+  </script>
+</body>
+</html>
