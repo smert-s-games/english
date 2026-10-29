@@ -58,8 +58,9 @@
       tools = document.createElement("div");
       tools.id = "fc-side-tools";
       tools.className = "fc-side-tools";
-      if (wrap.nextSibling) area.insertBefore(tools, wrap.nextSibling);
-      else area.appendChild(tools);
+      wrap.appendChild(tools);
+    } else if (tools.parentElement !== wrap) {
+      wrap.appendChild(tools);
     }
 
     if (fav && fav.parentElement !== tools) {

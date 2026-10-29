@@ -139,29 +139,22 @@ body.dark .hm-cell.l4 { background: #39d353; }
   .heatmap-legend .hm-cell { width: 18px; height: 18px; }
 }
 
-/* Side tools: fav + note to the right of the card */
-.flashcard-area {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 10px;
+/* Fav + note only: column top-right outside card, layout unchanged */
+.flashcard-wrap {
   position: relative;
 }
-.flashcard-wrap {
-  flex: 0 1 400px;
-  max-width: 400px;
-  width: 100%;
-}
 .fc-side-tools {
+  position: absolute;
+  top: 8px;
+  right: -52px;
+  z-index: 6;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-top: 4px;
-  flex-shrink: 0;
+  pointer-events: auto;
 }
 .fc-side-btn,
+.flashcard-wrap #fc-fav.btn-fav,
 .flashcard-area #fc-fav.btn-fav {
   position: static !important;
   top: auto !important;
@@ -180,6 +173,7 @@ body.dark .hm-cell.l4 { background: #39d353; }
   color: inherit;
   padding: 0;
   line-height: 1;
+  margin: 0;
 }
 .fc-note-btn.has-note {
   border-color: #1e8449;
@@ -230,10 +224,15 @@ body.dark .fc-note {
   margin-left: 4px;
 }
 
-@media (max-width: 480px) {
-  .flashcard-area { flex-wrap: nowrap; }
-  .fc-side-tools { padding-top: 0; }
+@media (max-width: 520px) {
+  .flashcard-wrap {
+    max-width: calc(100% - 56px);
+  }
+  .fc-side-tools {
+    right: -48px;
+  }
   .fc-side-btn,
+  .flashcard-wrap #fc-fav.btn-fav,
   .flashcard-area #fc-fav.btn-fav {
     width: 40px;
     height: 40px;
