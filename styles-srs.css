@@ -139,22 +139,54 @@ body.dark .hm-cell.l4 { background: #39d353; }
   .heatmap-legend .hm-cell { width: 18px; height: 18px; }
 }
 
-/* Word notes */
-.fc-note-box {
-  margin-top: 14px;
-  text-align: left;
+/* Side tools: fav + note to the right of the card */
+.flashcard-area {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  position: relative;
+}
+.flashcard-wrap {
+  flex: 0 1 400px;
+  max-width: 400px;
   width: 100%;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
 }
-.fc-note-label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-  opacity: 0.85;
+.fc-side-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+  flex-shrink: 0;
 }
+.fc-side-btn,
+.flashcard-area #fc-fav.btn-fav {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(127,127,127,0.35);
+  background: var(--bg-elevated, #fff);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  padding: 0;
+  line-height: 1;
+}
+.fc-note-btn.has-note {
+  border-color: #1e8449;
+  box-shadow: 0 0 0 2px rgba(30,132,73,0.25);
+}
+.fc-side-btn:hover { opacity: 0.92; }
+
 .fc-note {
   width: 100%;
   box-sizing: border-box;
@@ -174,7 +206,14 @@ body.dark .fc-note {
   border-color: rgba(255,255,255,0.2);
   color: #eee;
 }
-.fc-note-hint { font-size: 0.75rem; margin-top: 4px; }
+.note-overlay .note-modal {
+  max-width: 420px;
+  width: 92%;
+}
+.note-textarea {
+  margin: 12px 0 16px;
+  min-height: 120px;
+}
 .word-note-btn {
   border: none;
   background: transparent;
@@ -190,11 +229,14 @@ body.dark .fc-note {
   cursor: pointer;
   margin-left: 4px;
 }
-.note-overlay .note-modal {
-  max-width: 420px;
-  width: 92%;
-}
-.note-textarea {
-  margin: 12px 0 16px;
-  min-height: 120px;
+
+@media (max-width: 480px) {
+  .flashcard-area { flex-wrap: nowrap; }
+  .fc-side-tools { padding-top: 0; }
+  .fc-side-btn,
+  .flashcard-area #fc-fav.btn-fav {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+  }
 }
