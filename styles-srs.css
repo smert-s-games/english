@@ -90,7 +90,6 @@ body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-sess
 .srs-level-bar.l0 { background: #6c757d; } .srs-level-bar.l1 { background: #c0392b; }
 .srs-level-bar.l2 { background: #d68910; } .srs-level-bar.l3 { background: #2980b9; }
 .srs-level-bar.l4 { background: #1e8449; } .srs-level-bar.l5 { background: #0e6655; }
-.srs-level-n { text-align: right; }
 .daily-goal-bar-wrap { height: 14px; background: rgba(127,127,127,0.2); border-radius: 8px; overflow: hidden; margin: 8px 0; }
 .daily-goal-bar { height: 100%; width: 0; background: linear-gradient(90deg, #1e8449, #27ae60); border-radius: 8px; transition: width 0.3s; }
 .daily-goal-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -103,6 +102,22 @@ body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-sess
 
 .quiz-feedback.almost { color: #d68910; font-weight: 600; }
 .srs-requeue-tag { font-size: 0.8rem; margin-top: 6px; color: #e67e22; }
+
+/* Hard words */
+.hard-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.hard-badge {
+  background: rgba(192, 57, 43, 0.2);
+  color: #e74c3c;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.hard-session-banner {
+  background: rgba(192, 57, 43, 0.15) !important;
+  border-color: rgba(192, 57, 43, 0.4) !important;
+}
+.hard-intro { margin-bottom: 8px; }
 
 @media (max-width: 480px) {
   .srs-level-row, .srs-cat-row { grid-template-columns: 72px 1fr 56px; font-size: 0.8rem; }
