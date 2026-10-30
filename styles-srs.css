@@ -103,21 +103,24 @@ body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-sess
 .quiz-feedback.almost { color: #d68910; font-weight: 600; }
 .srs-requeue-tag { font-size: 0.8rem; margin-top: 6px; color: #e67e22; }
 
-/* Hard words */
 .hard-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
 .hard-badge {
-  background: rgba(192, 57, 43, 0.2);
-  color: #e74c3c;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  background: rgba(192, 57, 43, 0.2); color: #e74c3c;
+  padding: 2px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
 }
 .hard-session-banner {
   background: rgba(192, 57, 43, 0.15) !important;
   border-color: rgba(192, 57, 43, 0.4) !important;
 }
 .hard-intro { margin-bottom: 8px; }
+
+/* Smart training */
+.smart-train-card {
+  border-color: rgba(52, 152, 219, 0.5) !important;
+  background: rgba(52, 152, 219, 0.08);
+}
+.smart-mode-tag { font-size: 0.8rem; margin-top: 8px; }
+.smart-setup label { display: block; margin: 10px 0; }
 
 @media (max-width: 480px) {
   .srs-level-row, .srs-cat-row { grid-template-columns: 72px 1fr 56px; font-size: 0.8rem; }

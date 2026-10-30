@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark light" />
   <title>English Practice</title>
   <style>html, body { background: #0b0d12 !important; color: #e8eaed; margin: 0; }</style>
-  <link rel="stylesheet" href="styles-srs.css?v=34" />
+  <link rel="stylesheet" href="styles-srs.css?v=35" />
   <script>
     (function () {
       try {
@@ -38,7 +38,7 @@
       });
       doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) { el.remove(); });
       var headExtra = doc.createElement("link");
-      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=34";
+      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=35";
       doc.head.appendChild(headExtra);
       var anti = doc.createElement("style");
       anti.textContent = "html,body{background:#0b0d12}html[data-theme=light],html[data-theme=light] body{background:var(--bg, #f5f5f7)}";
@@ -96,6 +96,7 @@
           .then(function () { return loadScript("js/daily-limit.js?v=31"); })
           .then(function () { return loadScript("js/stats.js?v=32"); })
           .then(function () { return loadScript("js/hard-words.js?v=34"); })
+          .then(function () { return loadScript("js/smart-train.js?v=35"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");
