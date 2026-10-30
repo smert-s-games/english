@@ -1,4 +1,4 @@
-/* Smart training: task type by SRS level, alternating categories */
+/* Smart training: SRS-level tasks, category interleave, TTS audio */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -9,6 +9,7 @@
   var score = 0;
   var answered = false;
   var mistakes = [];
+  var speechSupported = typeof window !== "undefined" && "speechSynthesis" in window;
 
   function load() {
     try {
@@ -58,6 +59,42 @@
     return opts;
   }
 
+  function speak(text, lang) {
+    if (!speechSupported || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = lang || "en-US";
+      u.rate = 0.92;
+      var voices = window.speechSynthesis.getVoices() || [];
+      var en = voices.filter(function (v) {
+        return /^en(-|_)/i.test(v.lang);
+      });
+      if (en.length) {
+        var us = en.filter(function (v) {
+          return /en-US/i.test(v.lang);
+        });
+        u.voice = us[0] || en[0];
+      }
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  function speakQuestion(q) {
+    if (!q) return;
+    if (q.mode === "dictation") {
+      speak(q.speakText || q.correct || q.en, "en-US");
+      return;
+    }
+    if (q.mode === "en-ru" || q.mode === "blank") {
+      speak(q.en || q.correct, "en-US");
+      return;
+    }
+    if (q.mode === "ru-en" || q.mode === "type") {
+      speak(q.en || q.correct, "en-US");
+    }
+  }
+
   function getLevel(w) {
     if (!window.SRS) return 0;
     var st = load();
@@ -69,6 +106,7 @@
     if (level <= 1) return "en-ru";
     if (level === 2) return "ru-en";
     if (level === 3) return "type";
+    if (speechSupported) return "dictation";
     return "blank";
   }
 
@@ -78,13 +116,13 @@
     if (ex && en) {
       var re = new RegExp("\\b" + en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i");
       if (re.test(ex)) {
-        var blanked = ex.replace(re, "______");
         return {
           type: "type",
           mode: "blank",
-          prompt: blanked,
+          prompt: ex.replace(re, "______"),
           sub: "\u0412\u0441\u0442\u0430\u0432\u044c \u043f\u0440\u043e\u043f\u0443\u0449\u0435\u043d\u043d\u043e\u0435 \u0441\u043b\u043e\u0432\u043e",
           correct: en,
+          speakText: en,
           wordId: w.id,
           en: w.en,
           ru: w.ru,
@@ -98,6 +136,23 @@
       prompt: w.ru,
       sub: "\u041d\u0430\u043f\u0438\u0448\u0438 \u043f\u043e-\u0430\u043d\u0433\u043b\u0438\u0439\u0441\u043a\u0438",
       correct: en,
+      speakText: en,
+      wordId: w.id,
+      en: w.en,
+      ru: w.ru,
+      cat: w.cat,
+    };
+  }
+
+  function makeDictationQuestion(w) {
+    var speakText = w.example && w.example.indexOf(w.en) !== -1 ? w.example : w.en;
+    return {
+      type: "type",
+      mode: "dictation",
+      prompt: "\uD83D\uDD0A \u041f\u0440\u043e\u0441\u043b\u0443\u0448\u0430\u0439 \u0438 \u043d\u0430\u043f\u0438\u0448\u0438",
+      sub: speakText === w.en ? "\u0421\u043b\u043e\u0432\u043e" : "\u0424\u0440\u0430\u0437\u0430 / \u0441\u043b\u043e\u0432\u043e \u0438\u0437 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u044f",
+      correct: w.en,
+      speakText: speakText,
       wordId: w.id,
       en: w.en,
       ru: w.ru,
@@ -117,6 +172,7 @@
         sub: w.tr ? "[" + w.tr + "]" : "\u0412\u044b\u0431\u0435\u0440\u0438 \u043f\u0435\u0440\u0435\u0432\u043e\u0434",
         correct: w.ru,
         options: shuffle([w.ru].concat(wrong)),
+        speakText: w.en,
         wordId: w.id,
         en: w.en,
         ru: w.ru,
@@ -133,6 +189,7 @@
         sub: "\u0412\u044b\u0431\u0435\u0440\u0438 \u0430\u043d\u0433\u043b\u0438\u0439\u0441\u043a\u043e\u0435 \u0441\u043b\u043e\u0432\u043e",
         correct: w.en,
         options: shuffle([w.en].concat(wrong2)),
+        speakText: w.en,
         wordId: w.id,
         en: w.en,
         ru: w.ru,
@@ -147,12 +204,18 @@
         prompt: w.ru,
         sub: "\u041d\u0430\u043f\u0438\u0448\u0438 \u0441\u043b\u043e\u0432\u043e",
         correct: w.en,
+        speakText: w.en,
         wordId: w.id,
         en: w.en,
         ru: w.ru,
         cat: w.cat,
         level: level,
       };
+    }
+    if (kind === "dictation") {
+      var d = makeDictationQuestion(w);
+      d.level = level;
+      return d;
     }
     var q = makeBlankQuestion(w);
     q.level = level;
@@ -163,7 +226,6 @@
     if (typeof WORDS === "undefined" || !WORDS.length) return [];
     var st = load();
     if (window.SRS) SRS.migrateState(st);
-
     var scored = WORDS.map(function (w) {
       var e = window.SRS ? SRS.getEntry(st, w.id) : { level: 0, due: null, lapses: 0 };
       var due = window.SRS && SRS.isDue(e) ? 2 : 0;
@@ -174,7 +236,6 @@
     scored.sort(function (a, b) {
       return b.score - a.score;
     });
-
     var byCat = {};
     scored.forEach(function (s) {
       var c = s.w.cat || "other";
@@ -203,10 +264,8 @@
       used[w.id] = true;
       picked.push(w);
     }
-
-    var pool = WORDS;
     return picked.map(function (w) {
-      return buildQuestion(w, pool);
+      return buildQuestion(w, WORDS);
     });
   }
 
@@ -243,7 +302,9 @@
     card.id = "smart-train-card";
     card.innerHTML =
       "<strong>\u0423\u043c\u043d\u0430\u044f \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0430</strong>" +
-      "<span>\u0422\u0438\u043f \u0437\u0430\u0434\u0430\u043d\u0438\u044f \u043f\u043e \u0443\u0440\u043e\u0432\u043d\u044e SRS \u00b7 \u0447\u0435\u0440\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0439</span>";
+      "<span>SRS \u00b7 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438 \u00b7 \u043e\u0437\u0432\u0443\u0447\u043a\u0430" +
+      (speechSupported ? "" : " (\u0430\u0443\u0434\u0438\u043e \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u043e)") +
+      "</span>";
     card.addEventListener("click", openSetup);
     var freeTitle = null;
     menu.querySelectorAll("h3").forEach(function (h) {
@@ -262,7 +323,14 @@
     panel.className = "quiz-setup smart-setup hidden";
     panel.innerHTML =
       "<h3>\u0423\u043c\u043d\u0430\u044f \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0430</h3>" +
-      '<p class="muted">0\u20131: EN\u2192RU \u00b7 2: RU\u2192EN \u00b7 3: \u0432\u0432\u043e\u0434 \u00b7 4+: \u043f\u0440\u043e\u043f\u0443\u0441\u043a \u0432 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0438</p>' +
+      '<p class="muted">0\u20131: EN\u2192RU \u00b7 2: RU\u2192EN \u00b7 3: \u0432\u0432\u043e\u0434 \u00b7 4+: ' +
+      (speechSupported
+        ? "\u0434\u0438\u043a\u0442\u0430\u043d\u0442 (\u0430\u0443\u0434\u0438\u043e)"
+        : "\u043f\u0440\u043e\u043f\u0443\u0441\u043a \u0432 \u043f\u0440\u0435\u0434\u043b\u043e\u0436\u0435\u043d\u0438\u0438") +
+      "</p>" +
+      (speechSupported
+        ? '<p class="muted">\u041a\u043d\u043e\u043f\u043a\u0430 \uD83D\uDD0A \u2014 \u043f\u043e\u0432\u0442\u043e\u0440\u0438\u0442\u044c \u043e\u0437\u0432\u0443\u0447\u043a\u0443. \u041d\u0430 \u0434\u0438\u043a\u0442\u0430\u043d\u0442\u0435 \u0441\u043b\u043e\u0432\u043e \u0437\u0432\u0443\u0447\u0438\u0442 \u0430\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438.</p>'
+        : '<p class="muted">\u041e\u0437\u0432\u0443\u0447\u043a\u0430 \u043d\u0435 \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0435\u0442\u0441\u044f \u0432 \u044d\u0442\u043e\u043c \u0431\u0440\u0430\u0443\u0437\u0435\u0440\u0435.</p>') +
       "<label>\u0427\u0438\u0441\u043b\u043e \u0432\u043e\u043f\u0440\u043e\u0441\u043e\u0432" +
       '<select id="smart-count">' +
       '<option value="10">10</option>' +
@@ -298,6 +366,11 @@
 
   function backToMenu() {
     active = false;
+    if (speechSupported) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
     hideAllQuiz();
     var menu = document.getElementById("quiz-menu");
     if (menu) menu.classList.remove("hidden");
@@ -333,6 +406,7 @@
       "ru-en": "RU \u2192 EN",
       type: "\u0412\u0432\u043e\u0434",
       blank: "\u041f\u0440\u043e\u043f\u0443\u0441\u043a",
+      dictation: "\u0414\u0438\u043a\u0442\u0430\u043d\u0442",
     };
     return m[mode] || mode;
   }
@@ -350,12 +424,18 @@
     fb.className = "quiz-feedback";
     document.getElementById("quiz-continue").classList.add("hidden");
 
+    var audioBtn = speechSupported
+      ? '<button type="button" class="btn-audio" id="smart-audio-btn" title="\u041f\u0440\u043e\u0441\u043b\u0443\u0448\u0430\u0442\u044c">\uD83D\uDD0A</button>'
+      : "";
+
     var modeTag =
-      '<div class="smart-mode-tag muted">' +
+      '<div class="smart-mode-row">' +
+      audioBtn +
+      '<span class="smart-mode-tag muted">' +
       modeLabel(q.mode) +
       (q.level != null ? " \u00b7 \u0443\u0440. " + q.level : "") +
       (q.cat ? " \u00b7 " + q.cat : "") +
-      "</div>";
+      "</span></div>";
 
     var optsEl = document.getElementById("quiz-options");
     var inputWrap = document.getElementById("quiz-input-wrap");
@@ -386,14 +466,38 @@
         optsEl.appendChild(btn);
       });
     } else {
+      var promptHtml =
+        q.mode === "dictation"
+          ? '<div class="dictation-prompt">' + escapeHtml(q.prompt) + "</div>"
+          : escapeHtml(q.prompt);
       document.getElementById("quiz-question").innerHTML =
-        escapeHtml(q.prompt) +
+        promptHtml +
         (q.sub ? '<div class="muted">' + escapeHtml(q.sub) + "</div>" : "") +
         modeTag;
       inputWrap.classList.remove("hidden");
       var inp = document.getElementById("quiz-input");
       inp.value = "";
       inp.focus();
+    }
+
+    var ab = document.getElementById("smart-audio-btn");
+    if (ab) {
+      ab.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        speakQuestion(q);
+      });
+    }
+
+    if (speechSupported) {
+      setTimeout(
+        function () {
+          if (!active || answered) return;
+          if (q.mode === "dictation") speakQuestion(q);
+          else if (q.mode === "en-ru") speak(q.en, "en-US");
+        },
+        q.mode === "dictation" ? 350 : 200
+      );
     }
   }
 
@@ -407,6 +511,7 @@
         escapeHtml(q.correct) +
         "</strong>";
       fb.className = "quiz-feedback almost";
+      speak(q.correct || q.en, "en-US");
     } else if (ok) {
       score++;
       applySrs(q.wordId, "correct");
@@ -419,6 +524,7 @@
         escapeHtml(q.correct) +
         "</strong>";
       fb.className = "quiz-feedback wrong";
+      speak(q.correct || q.en, "en-US");
       mistakes.push({
         prompt: q.prompt,
         correct: q.correct,
@@ -454,6 +560,11 @@
 
   function nextQuestion() {
     if (!active || !answered) return;
+    if (speechSupported) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
     qIndex++;
     if (qIndex >= questions.length) {
       finishSession();
@@ -465,6 +576,11 @@
   function finishSession() {
     active = false;
     document.body.classList.remove("smart-train-on");
+    if (speechSupported) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
     hideAllQuiz();
     var result = document.getElementById("quiz-result");
     if (result) result.classList.remove("hidden");
@@ -573,6 +689,14 @@
   }
 
   function boot() {
+    if (speechSupported) {
+      try {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = function () {
+          window.speechSynthesis.getVoices();
+        };
+      } catch (e) {}
+    }
     ensureMenuCard();
     ensureSetupPanel();
     wireGlobal();
@@ -591,5 +715,6 @@
       return active;
     },
     open: openSetup,
+    speak: speak,
   };
 })();
