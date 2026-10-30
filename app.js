@@ -1,4 +1,4 @@
-/* app.js v30 — CDN app + SRS + dark default + due-aware quality */
+/* app.js v31 — CDN app + SRS + dark default + due-aware + daily limit */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -46,6 +46,11 @@
     var id = currentWordId();
     if (id == null) return;
     var st = ensureProgress();
+    if (window.DailyLimit && !DailyLimit.tryConsumeNew(st, id)) {
+      if (DailyLimit.toast) DailyLimit.toast("\u041b\u0438\u043c\u0438\u0442 \u043d\u043e\u0432\u044b\u0445 \u0441\u043b\u043e\u0432 \u043d\u0430 \u0441\u0435\u0433\u043e\u0434\u043d\u044f \u0438\u0441\u0447\u0435\u0440\u043f\u0430\u043d. \u041c\u043e\u0436\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e\u0432\u0442\u043e\u0440\u044f\u0442\u044c.");
+      return;
+    }
+    if (window.DailyLimit && DailyLimit.renderUi) DailyLimit.renderUi();
     var entry = SRS.applyQuality(SRS.getEntry(st, id), quality);
     SRS.setEntry(st, id, entry);
     var day = SRS.todayISO();
@@ -160,10 +165,12 @@
             if (merged.theme && st.themeUserSet) st.theme = merged.theme;
             if (merged.activity) st.activity = merged.activity;
             if (merged.dailyNewLimit != null) st.dailyNewLimit = merged.dailyNewLimit;
+            if (merged.newByDay) st.newByDay = merged.newByDay;
             if (window.SRS) SRS.migrateState(st);
             saveRaw(st);
             ensureDarkDefault();
             ensureProgress();
+            if (window.DailyLimit && DailyLimit.renderUi) DailyLimit.renderUi();
           },
         });
       }
