@@ -1,4 +1,4 @@
-/* app.js v31 — CDN app + SRS + dark default + due-aware + daily limit */
+/* app.js v34 — CDN + SRS + dark + due/hard-aware quality */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -12,13 +12,11 @@
       return {};
     }
   }
-
   function saveRaw(st) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(st));
     } catch (e) {}
   }
-
   function ensureProgress() {
     if (!window.SRS) return loadRaw();
     var st = loadRaw();
@@ -29,7 +27,6 @@
     if (due) due.textContent = String(SRS.countDue(st));
     return st;
   }
-
   function currentWordId() {
     var el = document.getElementById("fc-word");
     if (!el || typeof WORDS === "undefined") return null;
@@ -40,14 +37,14 @@
     }
     return null;
   }
-
   function applyQuality(quality) {
     if (!window.SRS) return;
     var id = currentWordId();
     if (id == null) return;
     var st = ensureProgress();
     if (window.DailyLimit && !DailyLimit.tryConsumeNew(st, id)) {
-      if (DailyLimit.toast) DailyLimit.toast("\u041b\u0438\u043c\u0438\u0442 \u043d\u043e\u0432\u044b\u0445 \u0441\u043b\u043e\u0432 \u043d\u0430 \u0441\u0435\u0433\u043e\u0434\u043d\u044f \u0438\u0441\u0447\u0435\u0440\u043f\u0430\u043d. \u041c\u043e\u0436\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e\u0432\u0442\u043e\u0440\u044f\u0442\u044c.");
+      if (DailyLimit.toast)
+        DailyLimit.toast("\u041b\u0438\u043c\u0438\u0442 \u043d\u043e\u0432\u044b\u0445 \u0441\u043b\u043e\u0432 \u043d\u0430 \u0441\u0435\u0433\u043e\u0434\u043d\u044f \u0438\u0441\u0447\u0435\u0440\u043f\u0430\u043d. \u041c\u043e\u0436\u043d\u043e \u0442\u043e\u043b\u044c\u043a\u043e \u043f\u043e\u0432\u0442\u043e\u0440\u044f\u0442\u044c.");
       return;
     }
     if (window.DailyLimit && DailyLimit.renderUi) DailyLimit.renderUi();
@@ -61,7 +58,6 @@
     if (due) due.textContent = String(SRS.countDue(st));
     if (window.EnglishAuth && EnglishAuth.scheduleCloudSave) EnglishAuth.scheduleCloudSave();
   }
-
   function wireQualityButtons() {
     function bind(id, quality) {
       var el = document.getElementById(id);
@@ -72,9 +68,8 @@
         function (e) {
           e.preventDefault();
           e.stopImmediatePropagation();
-          if (window.DueSession && DueSession.isActive && DueSession.isActive()) {
-            return;
-          }
+          if (window.DueSession && DueSession.isActive && DueSession.isActive()) return;
+          if (window.HardWords && HardWords.isActive && HardWords.isActive()) return;
           applyQuality(quality);
           var next = document.getElementById("fc-next");
           if (next) next.click();
@@ -87,7 +82,6 @@
     bind("fc-good", "good");
     bind("fc-easy", "easy");
   }
-
   function wireDueStart() {
     var btn = document.getElementById("due-today-start");
     if (!btn || btn.dataset.srsBound) return;
@@ -97,7 +91,6 @@
       if (nav) nav.click();
     });
   }
-
   function wireAccountFallback() {
     var btn = document.getElementById("account-btn");
     if (!btn || btn.dataset.srsBound) return;
@@ -110,7 +103,6 @@
       }
     });
   }
-
   function ensureDarkDefault() {
     var st = loadRaw();
     if (!st.themeUserSet) {
@@ -120,7 +112,6 @@
     document.documentElement.setAttribute("data-theme", st.theme || "dark");
   }
   ensureDarkDefault();
-
   function wireThemeUserFlag() {
     var btn = document.getElementById("theme-toggle");
     if (!btn || btn.dataset.themeFlag) return;
@@ -138,9 +129,7 @@
       true
     );
   }
-
   ensureProgress();
-
   var s = document.createElement("script");
   s.src = CDN_APP;
   s.onload = function () {

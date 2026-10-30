@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="dark light" />
   <title>English Practice</title>
-  <style>
-    html, body { background: #0b0d12 !important; color: #e8eaed; margin: 0; }
-  </style>
-  <link rel="stylesheet" href="styles-srs.css?v=33" />
+  <style>html, body { background: #0b0d12 !important; color: #e8eaed; margin: 0; }</style>
+  <link rel="stylesheet" href="styles-srs.css?v=34" />
   <script>
     (function () {
       try {
@@ -28,8 +26,7 @@
     try {
       var r = await fetch(CDN + "/index.html");
       var html = await r.text();
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(html, "text/html");
+      var doc = new DOMParser().parseFromString(html, "text/html");
       doc.documentElement.setAttribute("data-theme", "dark");
       doc.querySelectorAll("script[src],link[href]").forEach(function (el) {
         var attr = el.tagName === "LINK" ? "href" : "src";
@@ -41,8 +38,7 @@
       });
       doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) { el.remove(); });
       var headExtra = doc.createElement("link");
-      headExtra.rel = "stylesheet";
-      headExtra.href = "styles-srs.css?v=33";
+      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=34";
       doc.head.appendChild(headExtra);
       var anti = doc.createElement("style");
       anti.textContent = "html,body{background:#0b0d12}html[data-theme=light],html[data-theme=light] body{background:var(--bg, #f5f5f7)}";
@@ -60,8 +56,7 @@
       var stats = doc.querySelector(".stats-row");
       if (stats && !doc.getElementById("due-today-block")) {
         var due = doc.createElement("div");
-        due.className = "due-today-block";
-        due.id = "due-today-block";
+        due.className = "due-today-block"; due.id = "due-today-block";
         due.innerHTML =
           '<div class="due-today-text">Сегодня к повторению: <strong id="due-today-count">0</strong> слов</div>' +
           '<button type="button" class="btn btn-primary" id="due-today-start">Начать повторение</button>';
@@ -70,8 +65,7 @@
       var progCards = doc.querySelector("#view-progress .progress-cards");
       if (progCards && !doc.getElementById("activity-heatmap-card")) {
         var hm = doc.createElement("div");
-        hm.className = "progress-card heatmap-card";
-        hm.id = "activity-heatmap-card";
+        hm.className = "progress-card heatmap-card"; hm.id = "activity-heatmap-card";
         hm.innerHTML = "<h3>Активность (12 недель)</h3><div id=\"activity-heatmap\"></div>";
         progCards.appendChild(hm);
       }
@@ -93,7 +87,7 @@
       }
       setTimeout(function () {
         loadScript("js/srs.js?v=31")
-          .then(function () { return loadScript("app.js?v=31"); })
+          .then(function () { return loadScript("app.js?v=34"); })
           .then(function () { return loadScript("js/quiz-keys.js?v=23"); })
           .then(function () { return loadScript("js/srs-hooks.js?v=33"); })
           .then(function () { return loadScript("js/heatmap.js?v=23"); })
@@ -101,6 +95,7 @@
           .then(function () { return loadScript("js/due-session.js?v=30"); })
           .then(function () { return loadScript("js/daily-limit.js?v=31"); })
           .then(function () { return loadScript("js/stats.js?v=32"); })
+          .then(function () { return loadScript("js/hard-words.js?v=34"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");
