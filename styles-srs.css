@@ -13,7 +13,6 @@ html[data-theme="light"] { background: #f5f5f7; }
 .btn-srs.good { background: #1e8449; }
 .btn-srs.easy { background: #1a5276; }
 .due-today-block { text-align: center; margin: 16px auto; padding: 12px; }
-.due-today-text { margin-bottom: 8px; }
 .ep-due-toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: #1a1a2e; color: #fff; padding: 12px 18px; border-radius: 10px;
@@ -57,7 +56,6 @@ html[data-theme="light"] { background: #f5f5f7; }
   border: 1px solid rgba(127,127,127,0.35); background: var(--bg-elevated, #1a1a2e);
   font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0;
 }
-.fc-note-btn.has-note { border-color: #1e8449; }
 
 .due-session-banner {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -66,9 +64,6 @@ html[data-theme="light"] { background: #f5f5f7; }
   border: 1px solid rgba(30, 132, 73, 0.35); font-size: 0.9rem;
 }
 .due-session-banner.hidden { display: none !important; }
-body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-session-on #fc-learned {
-  opacity: 0.5; pointer-events: none;
-}
 
 .daily-limit-card { grid-column: 1 / -1; }
 .daily-limit-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
@@ -77,11 +72,8 @@ body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-sess
   border: 1px solid rgba(127,127,127,0.35); background: transparent; cursor: pointer; font-weight: 600;
 }
 .daily-limit-btn.active { background: #1e8449; border-color: #1e8449; color: #fff; }
-.daily-limit-home { margin-top: 10px; font-size: 0.9rem; }
-.btn-link { background: none; border: none; color: #5dade2; cursor: pointer; text-decoration: underline; font: inherit; padding: 0; }
 
 .srs-stats-card { grid-column: 1 / -1; }
-.srs-sub { margin-top: 20px; margin-bottom: 8px; font-size: 1rem; }
 .srs-level-row, .srs-cat-row {
   display: grid; grid-template-columns: 90px 1fr 72px; gap: 8px; align-items: center; margin: 6px 0; font-size: 0.88rem;
 }
@@ -92,38 +84,45 @@ body.due-session-on #fc-chapter, body.due-session-on #fc-category, body.due-sess
 .srs-level-bar.l4 { background: #1e8449; } .srs-level-bar.l5 { background: #0e6655; }
 .daily-goal-bar-wrap { height: 14px; background: rgba(127,127,127,0.2); border-radius: 8px; overflow: hidden; margin: 8px 0; }
 .daily-goal-bar { height: 100%; width: 0; background: linear-gradient(90deg, #1e8449, #27ae60); border-radius: 8px; transition: width 0.3s; }
-.daily-goal-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.daily-goal-btn {
-  min-width: 48px; padding: 6px 12px; border-radius: 10px;
-  border: 1px solid rgba(127,127,127,0.35); background: transparent; cursor: pointer; font-weight: 600;
-}
 .daily-goal-btn.active { background: #1a5276; border-color: #1a5276; color: #fff; }
-.srs-weak-list { margin: 6px 0 0; padding-left: 18px; font-size: 0.9rem; }
 
 .quiz-feedback.almost { color: #d68910; font-weight: 600; }
-.srs-requeue-tag { font-size: 0.8rem; margin-top: 6px; color: #e67e22; }
+.hard-badge { background: rgba(192, 57, 43, 0.2); color: #e74c3c; padding: 2px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+.hard-session-banner { background: rgba(192, 57, 43, 0.15) !important; border-color: rgba(192, 57, 43, 0.4) !important; }
 
-.hard-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
-.hard-badge {
-  background: rgba(192, 57, 43, 0.2); color: #e74c3c;
-  padding: 2px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
-}
-.hard-session-banner {
-  background: rgba(192, 57, 43, 0.15) !important;
-  border-color: rgba(192, 57, 43, 0.4) !important;
-}
-.hard-intro { margin-bottom: 8px; }
-
-/* Smart training */
 .smart-train-card {
   border-color: rgba(52, 152, 219, 0.5) !important;
   background: rgba(52, 152, 219, 0.08);
 }
-.smart-mode-tag { font-size: 0.8rem; margin-top: 8px; }
+.smart-mode-tag { font-size: 0.8rem; }
 .smart-setup label { display: block; margin: 10px 0; }
+
+.btn-audio {
+  border: 1px solid rgba(127,127,127,0.35);
+  background: rgba(52, 152, 219, 0.15);
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 1.15rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  flex-shrink: 0;
+}
+.btn-audio:hover { background: rgba(52, 152, 219, 0.3); }
+.smart-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.dictation-prompt {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 
 @media (max-width: 480px) {
   .srs-level-row, .srs-cat-row { grid-template-columns: 72px 1fr 56px; font-size: 0.8rem; }
   .flashcard-area { padding-right: 48px; }
-  .fc-side-tools { right: -44px; }
 }
