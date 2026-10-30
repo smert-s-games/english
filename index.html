@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark light" />
   <title>English Practice</title>
   <style>html, body { background: #0b0d12 !important; color: #e8eaed; margin: 0; }</style>
-  <link rel="stylesheet" href="styles-srs.css?v=36" />
+  <link rel="stylesheet" href="styles-srs.css?v=37" />
   <script>
     (function () {
       try {
@@ -38,7 +38,7 @@
       });
       doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) { el.remove(); });
       var headExtra = doc.createElement("link");
-      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=36";
+      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=37";
       doc.head.appendChild(headExtra);
       var anti = doc.createElement("style");
       anti.textContent = "html,body{background:#0b0d12}html[data-theme=light],html[data-theme=light] body{background:var(--bg, #f5f5f7)}";
@@ -58,7 +58,7 @@
         var due = doc.createElement("div");
         due.className = "due-today-block"; due.id = "due-today-block";
         due.innerHTML =
-          '<div class="due-today-text">Сегодня к повторению: <strong id="due-today-count">0</strong> слов</div>' +
+          '<div class="due-today-text">Сегодня к повторение: <strong id="due-today-count">0</strong> слов</div>' +
           '<button type="button" class="btn btn-primary" id="due-today-start">Начать повторение</button>';
         stats.insertAdjacentElement("afterend", due);
       }
@@ -97,6 +97,8 @@
           .then(function () { return loadScript("js/stats.js?v=32"); })
           .then(function () { return loadScript("js/hard-words.js?v=34"); })
           .then(function () { return loadScript("js/smart-train.js?v=36"); })
+          .then(function () { return loadScript("js/content-enrich.js?v=37"); })
+          .then(function () { return loadScript("js/assemble.js?v=37"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");
