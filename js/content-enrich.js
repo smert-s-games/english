@@ -88,7 +88,7 @@
         ru: "\u00ab" + ru + "\u00bb \u0432\u0430\u0436\u0435\u043d(\u0430) \u0434\u043b\u044f \u043c\u043e\u0435\u0439 \u043f\u043e\u0435\u0437\u0434\u043a\u0438.",
       };
     if (pos === "adjective")
-      return { en: "It looks " + en + ".", ru: "\u042d\u0442\u043e \u0432\u044b\u0433\u043b\u044f\u0434\u0438\u0442 " + ru + "." };
+      return { en: "It is " + en + ".", ru: "\u042d\u0442\u043e " + ru + "." };
     if (pos === "adverb")
       return { en: "Please speak " + en + ".", ru: "\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u0433\u043e\u0432\u043e\u0440\u0438\u0442\u0435 " + ru + "." };
     return {
@@ -204,7 +204,9 @@
   function findWordByEn(en) {
     if (typeof WORDS === "undefined") return null;
     en = (en || "").trim();
-    for (var i = 0; i < WORDS.length; i++) if (WORDS[i].en === en) return WORDS[i];
+    for (var i = 0; i < WORDS.length; i++) {
+      if (WORDS[i].en === en || WORDS[i].ru === en) return WORDS[i];
+    }
     return null;
   }
 
@@ -222,8 +224,12 @@
     host.innerHTML = extrasHtml(findWordByEn(enEl ? enEl.textContent : ""));
   }
 
+  var listDone = false;
   function enhanceWordList() {
-    document.querySelectorAll(".word-item").forEach(function (item) {
+    if (listDone) return;
+    var items = document.querySelectorAll(".word-item");
+    if (!items.length) return;
+    items.forEach(function (item) {
       if (item.querySelector(".word-item-extras")) return;
       var en = item.querySelector(".word-en");
       var w = findWordByEn(en ? en.textContent : "");
@@ -233,28 +239,31 @@
       box.innerHTML = extrasHtml(w);
       if (box.innerHTML) item.appendChild(box);
     });
+    listDone = true;
   }
 
   function boot() {
     enrich();
     var fcWord = document.getElementById("fc-word");
     if (fcWord) {
-      new MutationObserver(enhanceFlashcard).observe(fcWord, {
-        childList: true,
-        characterData: true,
-        subtree: true,
-      });
+      var t = null;
+      new MutationObserver(function () {
+        if (t) clearTimeout(t);
+        t = setTimeout(enhanceFlashcard, 40);
+      }).observe(fcWord, { childList: true, characterData: true, subtree: true });
     }
     document.addEventListener(
       "click",
-      function () {
-        setTimeout(enhanceWordList, 100);
-        setTimeout(enhanceFlashcard, 100);
+      function (e) {
+        var nav = e.target.closest && e.target.closest('.nav-btn[data-view="words"]');
+        if (nav) {
+          listDone = false;
+          setTimeout(enhanceWordList, 200);
+        }
       },
       true
     );
     setTimeout(enhanceFlashcard, 500);
-    setTimeout(enhanceWordList, 900);
   }
 
   if (document.readyState === "loading") {
