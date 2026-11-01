@@ -6,7 +6,7 @@
   <meta name="color-scheme" content="dark light" />
   <title>English Practice</title>
   <style>html, body { background: #0b0d12 !important; color: #e8eaed; margin: 0; }</style>
-  <link rel="stylesheet" href="styles-srs.css?v=37" />
+  <link rel="stylesheet" href="styles-srs.css?v=38" />
   <script>
     (function () {
       try {
@@ -38,7 +38,7 @@
       });
       doc.querySelectorAll('script[src*="app.js"]').forEach(function (el) { el.remove(); });
       var headExtra = doc.createElement("link");
-      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=37";
+      headExtra.rel = "stylesheet"; headExtra.href = "styles-srs.css?v=38";
       doc.head.appendChild(headExtra);
       var anti = doc.createElement("style");
       anti.textContent = "html,body{background:#0b0d12}html[data-theme=light],html[data-theme=light] body{background:var(--bg, #f5f5f7)}";
@@ -58,7 +58,7 @@
         var due = doc.createElement("div");
         due.className = "due-today-block"; due.id = "due-today-block";
         due.innerHTML =
-          '<div class="due-today-text">Сегодня к повторение: <strong id="due-today-count">0</strong> слов</div>' +
+          '<div class="due-today-text">Сегодня к повторению: <strong id="due-today-count">0</strong> слов</div>' +
           '<button type="button" class="btn btn-primary" id="due-today-start">Начать повторение</button>';
         stats.insertAdjacentElement("afterend", due);
       }
@@ -87,22 +87,22 @@
       }
       setTimeout(function () {
         loadScript("js/srs.js?v=31")
-          .then(function () { return loadScript("app.js?v=34"); })
+          .then(function () { return loadScript("app.js?v=38"); })
           .then(function () { return loadScript("js/quiz-keys.js?v=23"); })
           .then(function () { return loadScript("js/srs-hooks.js?v=33"); })
           .then(function () { return loadScript("js/heatmap.js?v=23"); })
-          .then(function () { return loadScript("js/notes.js?v=28"); })
+          .then(function () { return loadScript("js/notes.js?v=38"); })
           .then(function () { return loadScript("js/due-session.js?v=30"); })
           .then(function () { return loadScript("js/daily-limit.js?v=31"); })
-          .then(function () { return loadScript("js/stats.js?v=32"); })
+          .then(function () { return loadScript("js/stats.js?v=38"); })
           .then(function () { return loadScript("js/hard-words.js?v=34"); })
           .then(function () { return loadScript("js/smart-train.js?v=36"); })
-          .then(function () { return loadScript("js/content-enrich.js?v=37"); })
+          .then(function () { return loadScript("js/content-enrich.js?v=38"); })
           .then(function () { return loadScript("js/assemble.js?v=37"); })
           .catch(function (e) {
             console.error(e);
             var boot = document.getElementById("boot");
-            if (boot) boot.textContent = "Ошибка скриптов: " + e;
+            if (boot) boot.textContent = "Ошибка \u0441\u043a\u0440\u0438\u043f\u0442\u043e\u0432: " + e;
           });
       }, 300);
     } catch (e) {

@@ -1,4 +1,4 @@
-/* app.js v34 — CDN + SRS + dark + due/hard-aware quality */
+/* app.js v38 — CDN + SRS + dark + due/hard-aware quality */
 (function () {
   "use strict";
   var STORAGE_KEY = "english-practice-v1";
@@ -28,12 +28,18 @@
     return st;
   }
   function currentWordId() {
+    if (typeof WORDS === "undefined") return null;
     var el = document.getElementById("fc-word");
-    if (!el || typeof WORDS === "undefined") return null;
-    var en = (el.textContent || "").trim();
-    if (!en || en === "\u2014") return null;
-    for (var i = 0; i < WORDS.length; i++) {
-      if (WORDS[i].en === en) return WORDS[i].id;
+    var candidates = [];
+    if (el) candidates.push((el.textContent || "").trim());
+    var tr = document.getElementById("fc-translation");
+    if (tr) candidates.push((tr.textContent || "").trim());
+    for (var c = 0; c < candidates.length; c++) {
+      var text = candidates[c];
+      if (!text || text === "\u2014" || text === "-") continue;
+      for (var i = 0; i < WORDS.length; i++) {
+        if (WORDS[i].en === text || WORDS[i].ru === text) return WORDS[i].id;
+      }
     }
     return null;
   }
@@ -66,13 +72,16 @@
       el.addEventListener(
         "click",
         function (e) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
           if (window.DueSession && DueSession.isActive && DueSession.isActive()) return;
           if (window.HardWords && HardWords.isActive && HardWords.isActive()) return;
+          e.preventDefault();
+          e.stopPropagation();
           applyQuality(quality);
           var next = document.getElementById("fc-next");
-          if (next) next.click();
+          if (next)
+            setTimeout(function () {
+              next.click();
+            }, 0);
         },
         true
       );
@@ -167,8 +176,9 @@
       wireThemeUserFlag();
       ensureDarkDefault();
       ensureProgress();
+      setTimeout(wireQualityButtons, 400);
     }, 150);
-    setInterval(ensureProgress, 5000);
+    setInterval(ensureProgress, 15000);
   };
   s.onerror = function () {
     console.error("CDN app failed");
