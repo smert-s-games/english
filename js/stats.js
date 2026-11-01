@@ -26,14 +26,14 @@
   function catLabel(code) {
     if (window.CATEGORIES && CATEGORIES[code]) return CATEGORIES[code];
     var map = {
-      interview: "\u0421\u043e\u0431\u0435\u0441\u0435\u0434\u043e\u0432\u0430\u043d\u0438\u0435",
+      interview: "\u0418\u043d\u0442\u0435\u0440\u0432\u044c\u044e / \u0412\u0438\u0437\u0430",
       travel: "\u041f\u0443\u0442\u0435\u0448\u0435\u0441\u0442\u0432\u0438\u044f",
+      everyday: "\u041f\u043e\u0432\u0441\u0435\u0434\u043d\u0435\u0432\u043d\u043e\u0435",
       daily: "\u041f\u043e\u0432\u0441\u0435\u0434\u043d\u0435\u0432\u043d\u043e\u0435",
       work: "\u0420\u0430\u0431\u043e\u0442\u0430",
-      study: "\u0423\u0447\u0451\u0431\u0430",
-      home: "\u0414\u043e\u043c",
-      food: "\u0415\u0434\u0430",
-      health: "\u0417\u0434\u043e\u0440\u043e\u0432\u044c\u0435",
+      time: "\u0412\u0440\u0435\u043c\u044f",
+      family: "\u0421\u0435\u043c\u044c\u044f",
+      feelings: "\u0427\u0443\u0432\u0441\u0442\u0432\u0430 / \u041c\u043d\u0435\u043d\u0438\u044f",
     };
     return map[code] || code || "\u0414\u0440\u0443\u0433\u043e\u0435";
   }
@@ -56,18 +56,16 @@
       '<div class="daily-goal-options" id="daily-goal-options"></div>' +
       "</div>" +
       '<h3 class="srs-sub">\u041a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438</h3>' +
+      '<p class="muted" style="font-size:0.8rem;margin:0 0 6px">\u0427\u0438\u0441\u043b\u0430: \u0432\u044b\u0443\u0447\u0435\u043d\u043e (\u0443\u0440. \u2265 4) / \u0432\u0441\u0435\u0433\u043e \u0432 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438</p>' +
       '<div id="srs-cat-stats"></div>' +
       '<p class="muted srs-weak-title" id="srs-weak-title"></p>' +
       '<ul class="srs-weak-list" id="srs-weak-list"></ul>';
-    var hm = document.getElementById("activity-heatmap-card");
-    if (hm) prog.insertBefore(card, hm);
-    else prog.appendChild(card);
-
+    prog.appendChild(card);
     var opts = document.getElementById("daily-goal-options");
     GOAL_OPTIONS.forEach(function (n) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "btn btn-ghost daily-goal-btn";
+      b.className = "daily-goal-btn";
       b.dataset.goal = String(n);
       b.textContent = String(n);
       b.addEventListener("click", function () {
@@ -84,21 +82,18 @@
   function levelCounts(st) {
     var counts = [0, 0, 0, 0, 0, 0];
     var totalWords = typeof WORDS !== "undefined" ? WORDS.length : 0;
-    var seen = {};
     var map = st.learned || {};
     Object.keys(map).forEach(function (id) {
       var e = window.SRS ? SRS.normalizeEntry(map[id]) : map[id];
       var lv = Math.max(0, Math.min(5, (e && e.level) | 0));
       counts[lv]++;
-      seen[id] = true;
     });
-    var untouched = 0;
-    if (typeof WORDS !== "undefined") {
-      WORDS.forEach(function (w) {
-        if (!seen[String(w.id)]) untouched++;
-      });
+    if (totalWords) {
+      var tracked = counts.reduce(function (a, b) {
+        return a + b;
+      }, 0);
+      if (tracked < totalWords) counts[0] += totalWords - tracked;
     }
-    counts[0] += untouched;
     return {
       counts: counts,
       total: totalWords || counts.reduce(function (a, b) {
@@ -108,20 +103,19 @@
   }
 
   function categoryStats(st) {
-    if (typeof WORDS === "undefined") return [];
     var byCat = {};
+    if (typeof WORDS === "undefined") return [];
     WORDS.forEach(function (w) {
       var c = w.cat || "other";
-      if (!byCat[c]) byCat[c] = { code: c, total: 0, errors: 0, learned: 0, levels: 0 };
+      if (!byCat[c]) byCat[c] = { code: c, total: 0, errors: 0, learned: 0 };
       byCat[c].total++;
       var e = window.SRS ? SRS.getEntry(st, w.id) : null;
       if (e && e.level >= 4) byCat[c].learned++;
-      if (e && e.level > 0) byCat[c].levels++;
       if (e && (e.lapses | 0) > 0) byCat[c].errors += e.lapses | 0;
     });
     (st.quizHistory || []).forEach(function (h) {
       (h.mistakes || []).forEach(function (m) {
-        if (!m.wordId) return;
+        if (m.wordId == null) return;
         var w = null;
         for (var i = 0; i < WORDS.length; i++) {
           if (String(WORDS[i].id) === String(m.wordId)) {
@@ -131,7 +125,7 @@
         }
         if (!w) return;
         var c = w.cat || "other";
-        if (!byCat[c]) byCat[c] = { code: c, total: 0, errors: 0, learned: 0, levels: 0 };
+        if (!byCat[c]) byCat[c] = { code: c, total: 0, errors: 0, learned: 0 };
         byCat[c].errors++;
       });
     });
@@ -152,16 +146,18 @@
     var lc = levelCounts(st);
     var levelsEl = document.getElementById("srs-levels");
     if (levelsEl) {
-      var labels = [
-        "\u041d\u043e\u0432\u044b\u0435 (0)",
-        "\u0423\u0440. 1",
-        "\u0423\u0440. 2",
-        "\u0423\u0440. 3",
-        "\u0423\u0440. 4 \u2713",
-        "\u0423\u0440. 5 \u2713",
-      ];
+      var learnedN = (lc.counts[4] || 0) + (lc.counts[5] || 0);
+      var labels = ["\u041d\u043e\u0432\u044b\u0435", "\u0423\u0440. 1", "\u0423\u0440. 2", "\u0423\u0440. 3", "\u0423\u0440. 4 \u2713", "\u0423\u0440. 5 \u2713"];
       var max = Math.max.apply(null, lc.counts.concat([1]));
-      var html = "";
+      var working = (lc.counts[1] || 0) + (lc.counts[2] || 0) + (lc.counts[3] || 0);
+      var html =
+        '<p class="srs-summary"><strong>\u0412\u044b\u0443\u0447\u0435\u043d\u043e (\u0443\u0440. \u2265 4): ' +
+        learnedN +
+        "</strong> \u0438\u0437 " +
+        lc.total +
+        " \u00b7 \u0432 \u0440\u0430\u0431\u043e\u0442\u0435 (1\u20133): " +
+        working +
+        "</p>";
       for (var i = 0; i <= 5; i++) {
         var pct = Math.round((lc.counts[i] / max) * 100);
         var share = lc.total ? Math.round((lc.counts[i] / lc.total) * 100) : 0;
@@ -240,10 +236,12 @@
     var wl = document.getElementById("srs-weak-list");
     if (wt && wl) {
       if (!weak.length) {
-        wt.textContent = "\u0421\u043b\u0430\u0431\u044b\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438: \u043f\u043e\u043a\u0430 \u043d\u0435\u0442 \u043e\u0448\u0438\u0431\u043e\u043a \u0432 \u0438\u0441\u0442\u043e\u0440\u0438\u0438.";
+        wt.textContent =
+          "\u0421\u043b\u0430\u0431\u044b\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438: \u043f\u043e\u043a\u0430 \u043d\u0435\u0442 \u043e\u0448\u0438\u0431\u043e\u043a \u0432 \u0438\u0441\u0442\u043e\u0440\u0438\u0438.";
         wl.innerHTML = "";
       } else {
-        wt.textContent = "\u0421\u043b\u0430\u0431\u044b\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438 (\u043f\u043e \u043e\u0448\u0438\u0431\u043a\u0430\u043c \u0438 \u0441\u0440\u044b\u0432\u0430\u043c):";
+        wt.textContent =
+          "\u0421\u043b\u0430\u0431\u044b\u0435 \u043a\u0430\u0442\u0435\u0433\u043e\u0440\u0438\u0438 (\u043f\u043e \u043e\u0448\u0438\u0431\u043a\u0430\u043c \u0438 \u0441\u0440\u044b\u0432\u0430\u043c):";
         wl.innerHTML = weak
           .map(function (c) {
             return (
@@ -260,24 +258,25 @@
   }
 
   function boot() {
+    ensureCard();
     render();
     document.addEventListener(
       "click",
       function (e) {
-        var nav = e.target.closest && e.target.closest('.nav-btn[data-view="progress"]');
-        if (nav) setTimeout(render, 80);
+        if (e.target.closest && e.target.closest('.nav-btn[data-view="progress"]')) {
+          setTimeout(render, 100);
+        }
       },
       true
     );
-    setInterval(render, 10000);
   }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", function () {
-      setTimeout(boot, 950);
+      setTimeout(boot, 900);
     });
   } else {
-    setTimeout(boot, 950);
+    setTimeout(boot, 900);
   }
 
   window.SrsStats = { render: render };
